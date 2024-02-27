@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GamingManager.Contracts\GamingManager.Contracts.csproj" />
+    <ProjectReference Include="..\GamingManager.Domain\GamingManager.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Accounts\Commands\CreateFromUser\" />
+    <Folder Include="Features\Accounts\Commands\CreateFromLogin\" />
+    <Folder Include="Features\Accounts\Commands\AssignUser\" />
+    <Folder Include="Features\Accounts\Commands\AssignUuid\" />
+    <Folder Include="Features\Accounts\Commands\ReAssignUser\" />
+    <Folder Include="Features\Accounts\DTOs\" />
+    <Folder Include="Features\Accounts\Queries\" />
+    <Folder Include="Features\GameServers\Commands\Create\" />
+    <Folder Include="Features\GameServers\Commands\ChangeShutdownDelay\" />
+    <Folder Include="Features\GameServers\Commands\CancelShutdown\" />
+    <Folder Include="Features\GameServers\Commands\Crashed\" />
+    <Folder Include="Features\GameServers\Commands\BeginMaintenance\" />
+    <Folder Include="Features\GameServers\Commands\FinishMaintenance\" />
+    <Folder Include="Features\GameServers\Commands\Delete\" />
+    <Folder Include="Features\GameServers\Commands\Started\" />
+    <Folder Include="Features\GameServers\Commands\ShuttedDown\" />
+    <Folder Include="Features\GameServers\Commands\Shutdown\" />
+    <Folder Include="Features\GameServers\Commands\ScheduleShutdown\" />
+    <Folder Include="Features\GameServers\Commands\Start\" />
+    <Folder Include="Features\GameServers\DTOs\" />
+    <Folder Include="Features\GameServers\Queries\" />
+    <Folder Include="Features\Games\DTOs\" />
+    <Folder Include="Features\Games\Queries\GetGame\" />
+    <Folder Include="Features\Games\Queries\GetAllGames\" />
+    <Folder Include="Features\Projects\Commands\Create\" />
+    <Folder Include="Features\Projects\Commands\Join\" />
+    <Folder Include="Features\Projects\Commands\Leave\" />
+    <Folder Include="Features\Projects\Commands\Ban\" />
+    <Folder Include="Features\Projects\Commands\Allow\" />
+    <Folder Include="Features\Projects\Commands\AddToTeam\" />
+    <Folder Include="Features\Projects\Commands\Finish\" />
+    <Folder Include="Features\Projects\Commands\SetPlannedEnd\" />
+    <Folder Include="Features\Projects\Commands\RescheduleStart\" />
+    <Folder Include="Features\Projects\Commands\RemoveFromTeam\" />
+    <Folder Include="Features\Projects\Commands\Pardon\" />
+    <Folder Include="Features\Projects\DTOs\" />
+    <Folder Include="Features\Projects\Queries\" />
+    <Folder Include="Features\Servers\Commands\Create\" />
+    <Folder Include="Features\Servers\Commands\ChangeAlias\" />
+    <Folder Include="Features\Servers\Commands\ChangeMac\" />
+    <Folder Include="Features\Servers\Commands\CancelShutdown\" />
+    <Folder Include="Features\Servers\Commands\BeginMaintenance\" />
+    <Folder Include="Features\Servers\Commands\FinishMaintenance\" />
+    <Folder Include="Features\Servers\Commands\ReceiveHeartbeat\" />
+    <Folder Include="Features\Servers\Commands\Shutdown\" />
+    <Folder Include="Features\Servers\Commands\ScheduleShutdown\" />
+    <Folder Include="Features\Servers\Commands\StartFailed\" />
+    <Folder Include="Features\Servers\Commands\Start\" />
+    <Folder Include="Features\Servers\DTOs\" />
+    <Folder Include="Features\Servers\Queries\" />
+    <Folder Include="Features\Users\Commands\" />
+    <Folder Include="Features\Users\DTOs\" />
+    <Folder Include="Features\Users\Queries\" />
+  </ItemGroup>
+
+</Project>
