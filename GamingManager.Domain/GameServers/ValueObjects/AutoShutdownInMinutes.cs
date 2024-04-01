@@ -1,3 +1,3 @@
 ﻿namespace GamingManager.Domain.GameServers.ValueObjects;
 
-public readonly record struct GameServerAutoShutdownDelay(uint Minutes);
+public sealed record GameServerAutoShutdownDelay(uint Minutes);

@@ -5,12 +5,17 @@ using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.Projects.Events;
 using GamingManager.Domain.Projects.ValueObjects;
+using System.Net.Http.Headers;
 
 namespace GamingManager.Domain.Projects.Entities;
 
 public class Participant : Entity<ParticipantId>
 {
     private readonly List<Session> _sessions = [];
+
+    private readonly List<Ban> _bans = [];
+
+    private readonly TimeSpan _playTime;
     internal Participant(
         ProjectId projectId,
         AccountId playerId) : base(ParticipantId.CreateNew())
@@ -19,6 +24,7 @@ public class Participant : Entity<ParticipantId>
 		Account = playerId;
         Since = new ParticipatesSinceUtc(DateTime.UtcNow);
         Online = false;
+        _playTime = new TimeSpan(0, 0, 0);
     }
 
 #pragma warning disable CS8618
@@ -31,24 +37,63 @@ public class Participant : Entity<ParticipantId>
 
     public ParticipatesSinceUtc Since { get; }
 
-    public Reason? BanReason { get; private set; }
-
     public bool Online { get; private set; }
+
+    public TimeSpan PlayTime => _playTime;
+
+    public IReadOnlyCollection<Ban> Bans => _bans.AsReadOnly();
+
+    public bool IsCurrentlyBanned
+    {
+        get
+        {
+			var lastBan = _bans
+				.OrderBy(ban => ban.BannedAtUtc)
+				.LastOrDefault();
+            if (lastBan is null) return false;
+
+            if(lastBan.Duration is null) return true;
+
+            var banEndsAtUtc = lastBan.BannedAtUtc.Add(lastBan.Duration.Value);
+
+            return banEndsAtUtc <= DateTime.UtcNow;
+		}
+    }
 
     public IReadOnlyCollection<Session> Sessions => _sessions.AsReadOnly();
 
-    internal CanFail Ban(Reason reason)
+    internal CanFail<Ban> BanPermanent(Reason reason)
     {
-        if (BanReason is not null) return Errors.Projects.Participants.AlreadyBanned;
-        BanReason = reason;
-        RaiseDomainEvent(new ParticipantBannedEvent(Project, Id, reason));
-        return CanFail.Success();
-    }
+        if(IsCurrentlyBanned) return Errors.Projects.Participants.AlreadyBanned;
 
-    internal CanFail Pardon()
+        var ban = Ban.CreatePermanent(Id, reason, DateTime.UtcNow);
+        _bans.Add(ban);
+
+        RaiseDomainEvent(new ParticipantBannedEvent(Project, Id, ban));
+        return ban;
+	}
+
+	internal CanFail<Ban> BanTemporary(Reason reason, TimeSpan duration)
+	{
+		if (IsCurrentlyBanned) return Errors.Projects.Participants.AlreadyBanned;
+
+		var ban = Ban.CreateTemporary(Id, reason, DateTime.UtcNow, duration);
+		_bans.Add(ban);
+
+		RaiseDomainEvent(new ParticipantBannedEvent(Project, Id, ban));
+		return ban;
+	}
+
+	internal CanFail Pardon()
     {
-        if (BanReason is null) return Errors.Projects.Participants.NotBanned;
-        BanReason = null;
+        if(!IsCurrentlyBanned) return Errors.Projects.Participants.NotBanned;
+
+        var lastBan = _bans
+			.OrderBy(ban => ban.BannedAtUtc)
+			.Last();
+
+        _bans.Remove(lastBan);
+
         RaiseDomainEvent(new ParticipantPardonnedEvent(Project, Id));
         return CanFail.Success();
     }
@@ -61,10 +106,10 @@ public class Participant : Entity<ParticipantId>
         if (lastSession is not null)
         {
             if (lastSession.End is null) return Errors.Projects.Participants.OpenSession;
-            else if (joinTime.Value >= lastSession.End.Value) return Errors.Projects.Participants.JoinBeforePreviousSession;
+            else if (joinTime.Value >= lastSession.End.EndTime) return Errors.Projects.Participants.JoinBeforePreviousSession;
 		}
 
-        var currentSession = new Session(Project, Id, joinTime);
+        var currentSession = new Session(Id, joinTime);
         _sessions.Add(currentSession);
         Online = true;
         RaiseDomainEvent(new ParticipantJoinedEvent(Project, Id, joinTime));
@@ -83,6 +128,7 @@ public class Participant : Entity<ParticipantId>
 
 		lastSession.Stop(leaveTime, irregular);
         Online = false;
+        _playTime.Add(lastSession.Duration);
         RaiseDomainEvent(new ParticipantLeftEvent(Project, Id, leaveTime, irregular));
 		return CanFail.Success();
 	}

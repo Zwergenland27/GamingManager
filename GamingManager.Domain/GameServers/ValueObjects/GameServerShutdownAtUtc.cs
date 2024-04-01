@@ -1,3 +1,3 @@
 ﻿namespace GamingManager.Domain.GameServers.ValueObjects;
 
-public readonly record struct GameServerShutdownAtUtc(DateTime Value);
+public sealed record GameServerShutdownAtUtc(DateTime Value);

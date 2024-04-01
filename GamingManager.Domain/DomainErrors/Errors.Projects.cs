@@ -165,6 +165,30 @@ public static partial class Errors
 				"Project.Participant.JoinBeforePreviousSession",
 				"The player cannot join before the previous session");
 
+			public static class Bans
+			{
+
+				public static class Reason
+				{
+					/// <summary>
+					/// The reason for the ban cannot be empty
+					/// </summary>
+					public static Error Empty => Error.Validation(
+						"Project.Participant.Ban.Reason.Empty",
+						"The reason for the ban cannot be empty");
+				}
+
+				public static class Id
+				{
+					/// <summary>
+					/// The provided id is not a valid guid
+					/// </summary>
+					public static Error Invalid => Error.Validation(
+						"Project.Participant.Ban.Id.Invalid",
+						"The provided id is not a valid guid");
+				}
+			}
+
 			public static class Sessions
 			{
 				/// <summary>
@@ -174,12 +198,15 @@ public static partial class Errors
 					"Project.Participant.Session.EndBeforeStart",
 					"The session cannot end before it started");
 
-				/// <summary>
-				/// The provided id is not a valid guid
-				/// </summary>
-				public static Error Invalid => Error.Validation(
-					"Project.Participant.Session.Id.Invalid",
-					$"The provided id is not a valid guid");
+				public static class Id
+				{
+					/// <summary>
+					/// The provided id is not a valid guid
+					/// </summary>
+					public static Error Invalid => Error.Validation(
+						"Project.Participant.Session.Id.Invalid",
+						$"The provided id is not a valid guid");
+				}
 			}
 
 			/// <summary>

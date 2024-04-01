@@ -1,3 +1,3 @@
 ﻿namespace GamingManager.Domain.GameServers.ValueObjects;
 
-public readonly record struct StartedAtUtc(DateTime Value);
+public sealed record StartedAtUtc(DateTime Value);

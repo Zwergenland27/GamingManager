@@ -1,3 +1,3 @@
 ﻿namespace GamingManager.Domain.Projects.ValueObjects;
 
-public record ProjectName(string Value);
+public sealed record ProjectName(string Value);

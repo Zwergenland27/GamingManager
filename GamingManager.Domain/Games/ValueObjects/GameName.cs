@@ -1,3 +1,3 @@
 ﻿namespace GamingManager.Domain.Games.ValueObjects;
 
-public record GameName(string Value);
+public sealed record GameName(string Value);

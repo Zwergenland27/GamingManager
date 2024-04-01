@@ -85,7 +85,7 @@ public class Server : AggregateRoot<ServerId>
 		if (Status == ServerStatus.Starting) return Errors.Servers.CannotShutdownStarting;
 		if (Status == ServerStatus.Offline) return Errors.Servers.CannotShutdownOffline;
 		if (ShutdownAt is null) return Errors.Servers.NoShutdownScheduled;
-		if (ShutdownAt.Value.Value < DateTime.UtcNow) return Errors.Servers.ShutdownTooEarly;
+		if (ShutdownAt.Value < DateTime.UtcNow) return Errors.Servers.ShutdownTooEarly;
 
 		Status = ServerStatus.Offline;
 		ShutdownAt = null;
@@ -110,7 +110,7 @@ public class Server : AggregateRoot<ServerId>
 
 	public CanFail Heartbeat(HeartbeatReceivedAtUtc utcTime)
 	{
-		if (LastHeartbeatAt is not null && LastHeartbeatAt.Value.Value >= utcTime.Value) return Errors.Servers.PingBeforeLast;
+		if (LastHeartbeatAt is not null && LastHeartbeatAt.Value >= utcTime.Value) return Errors.Servers.PingBeforeLast;
 
 		LastHeartbeatAt = utcTime;
 

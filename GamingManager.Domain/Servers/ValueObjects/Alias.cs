@@ -2,7 +2,7 @@
 
 namespace GamingManager.Domain.Servers.ValueObjects;
 
-public class Alias
+public sealed record Alias
 {
     private Alias(string value)
     {

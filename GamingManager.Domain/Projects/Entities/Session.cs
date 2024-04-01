@@ -8,11 +8,9 @@ namespace GamingManager.Domain.Projects.Entities;
 public class Session : Entity<SessionId>
 {
 	internal Session(
-		ProjectId projectId,
 		ParticipantId participantId,
 		SessionStartsAtUtc start) : base(SessionId.CreateNew())
 	{
-		Project = projectId;
 		Participant = participantId;
 		Start = start;
 	}
@@ -20,10 +18,8 @@ public class Session : Entity<SessionId>
 #pragma warning disable CS8618
 	private Session() : base(default!) { }
 #pragma warning restore
-
-	public ProjectId Project { get; }
-
-	public ParticipantId Participant { get; }
+	
+	public ParticipantId Participant { get; private init; }
 
 	public SessionStartsAtUtc Start { get; private init; }
 
@@ -36,7 +32,7 @@ public class Session : Entity<SessionId>
 			DateTime endUtc = DateTime.UtcNow;
 			if (End is not null)
 			{
-				endUtc = End.Value;
+				endUtc = End.EndTime;
 			}
 
 			return endUtc.Subtract(Start.Value);
@@ -45,8 +41,8 @@ public class Session : Entity<SessionId>
 
 	internal CanFail Stop(SessionEndsAtUtc end, bool irregular = false)
 	{
-		if (end.Value < Start.Value) return Errors.Projects.Participants.Sessions.EndBeforeStart;
-		End = new SessionEndsAtUtc(end.Value, irregular);
+		if (end.EndTime < Start.Value) return Errors.Projects.Participants.Sessions.EndBeforeStart;
+		End = new SessionEndsAtUtc(end.EndTime, irregular);
 		return CanFail.Success();
 	}
 }

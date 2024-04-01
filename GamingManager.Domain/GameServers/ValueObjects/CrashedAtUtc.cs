@@ -1,3 +1,3 @@
 ﻿namespace GamingManager.Domain.GameServers.ValueObjects;
 
-public readonly record struct CrashedAtUtc(DateTime Value);
+public sealed record CrashedAtUtc(DateTime Value);

@@ -3,4 +3,4 @@
 /// <summary>
 /// The last name of the user
 /// </summary>
-public record Lastname(string Value);
+public sealed record Lastname(string Value);

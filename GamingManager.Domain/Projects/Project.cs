@@ -70,7 +70,7 @@ public class Project : AggregateRoot<ProjectId>
 
 		if (Ended) return Errors.Projects.Ended;
 
-		if (participant.BanReason != null) return Errors.Projects.Participants.Banned;
+		if (participant.IsCurrentlyBanned) return Errors.Projects.Participants.Banned;
 		return participant.Join(joinTime);
 	}
 
@@ -90,12 +90,20 @@ public class Project : AggregateRoot<ProjectId>
 		return CanFail.Success();
 	}
 
-	public CanFail Ban(ParticipantId participantId, Reason reason)
+	public CanFail<Ban> BanPermanent(ParticipantId participantId, Reason reason)
 	{
 		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
-		return participant.Ban(reason);
+		return participant.BanPermanent(reason);
+	}
+
+	public CanFail<Ban> BanTemporary(ParticipantId participantId, Reason reason, TimeSpan duration)
+	{
+		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
+		if (participant is null) return Errors.Projects.Participants.NotParticipating;
+
+		return participant.BanTemporary(reason, duration);
 	}
 
 	public CanFail Pardon(ParticipantId participantId)

@@ -11,15 +11,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{D08DF4F3-2353-49E5-9EA4-D3D76CA1FFC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingManager.Domain", "GamingManager.Domain\GamingManager.Domain.csproj", "{0BDA3911-A944-49BA-A871-A4A05D58E295}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamingManager.Domain", "GamingManager.Domain\GamingManager.Domain.csproj", "{0BDA3911-A944-49BA-A871-A4A05D58E295}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingManager.Application", "GamingManager.Application\GamingManager.Application.csproj", "{9313524A-1D10-4CBE-AEAB-075663044B83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamingManager.Application", "GamingManager.Application\GamingManager.Application.csproj", "{9313524A-1D10-4CBE-AEAB-075663044B83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingManager.Contracts", "GamingManager.Contracts\GamingManager.Contracts.csproj", "{25C2737F-F476-47D0-8432-3DD7B2EDE27E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamingManager.Contracts", "GamingManager.Contracts\GamingManager.Contracts.csproj", "{25C2737F-F476-47D0-8432-3DD7B2EDE27E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamingManager.Infrastructure", "GamingManager.Infrastructure\GamingManager.Infrastructure.csproj", "{E31EDBFD-FF37-4588-BD17-10089C37346C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamingManager.Infrastructure", "GamingManager.Infrastructure\GamingManager.Infrastructure.csproj", "{E31EDBFD-FF37-4588-BD17-10089C37346C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "WebApi\WebApi.csproj", "{566165F1-E9B1-4B99-AA5F-A61804D77B36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GamingManager.WebApi", "GamingManager.WebApi\GamingManager.WebApi.csproj", "{860D2B2C-6664-4F5B-9FBE-A59337700B46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +43,10 @@ Global
 		{E31EDBFD-FF37-4588-BD17-10089C37346C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E31EDBFD-FF37-4588-BD17-10089C37346C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E31EDBFD-FF37-4588-BD17-10089C37346C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{566165F1-E9B1-4B99-AA5F-A61804D77B36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{566165F1-E9B1-4B99-AA5F-A61804D77B36}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{566165F1-E9B1-4B99-AA5F-A61804D77B36}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{566165F1-E9B1-4B99-AA5F-A61804D77B36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{860D2B2C-6664-4F5B-9FBE-A59337700B46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{860D2B2C-6664-4F5B-9FBE-A59337700B46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{860D2B2C-6664-4F5B-9FBE-A59337700B46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{860D2B2C-6664-4F5B-9FBE-A59337700B46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,7 +59,7 @@ Global
 		{9313524A-1D10-4CBE-AEAB-075663044B83} = {4530D453-0F15-490E-8EE8-CB8BB2CB5AF8}
 		{25C2737F-F476-47D0-8432-3DD7B2EDE27E} = {190DD4C1-4E8F-400D-9EBC-E38405977D64}
 		{E31EDBFD-FF37-4588-BD17-10089C37346C} = {D08DF4F3-2353-49E5-9EA4-D3D76CA1FFC3}
-		{566165F1-E9B1-4B99-AA5F-A61804D77B36} = {190DD4C1-4E8F-400D-9EBC-E38405977D64}
+		{860D2B2C-6664-4F5B-9FBE-A59337700B46} = {190DD4C1-4E8F-400D-9EBC-E38405977D64}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D6820B0F-4941-4272-8185-0D9CED518134}

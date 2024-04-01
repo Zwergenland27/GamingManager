@@ -4,9 +4,9 @@ using GamingManager.Domain.DomainErrors;
 namespace GamingManager.Domain.Projects.ValueObjects;
 
 /// <summary>
-/// Strongly typed id for <see cref=">Organisator"/>
+/// Strongly typed id for <see cref="TeamMember"/>"/>
 /// </summary>
-public readonly record struct TeamMemberId(Guid Value)
+public sealed record TeamMemberId(Guid Value)
 {
 
     /// <summary>

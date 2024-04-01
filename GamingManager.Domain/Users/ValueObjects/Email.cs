@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GamingManager.Domain.Users.ValueObjects;
 
-public class Email
+public sealed record Email
 {
     private Email(string value)
     {
@@ -12,11 +12,11 @@ public class Email
     }
     public string Value { get; private init; }
 
-    public CanFail<Email> Create(string value)
+    public static CanFail<Email> Create(string value)
     {
         if (!new EmailAddressAttribute().IsValid(value))
         {
-            return Errors.Users.Email.Invalid(value);
+            return Errors.Users.Email.Invalid;
         }
 
         return new Email(value);

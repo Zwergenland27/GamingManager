@@ -1,3 +1,3 @@
 ﻿namespace GamingManager.Domain.Servers.ValueObjects;
 
-public readonly record struct HeartbeatReceivedAtUtc(DateTime Value);
+public sealed record HeartbeatReceivedAtUtc(DateTime Value);

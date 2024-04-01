@@ -1,3 +1,3 @@
 ﻿namespace GamingManager.Domain.Projects.ValueObjects;
 
-public readonly record struct SessionStartsAtUtc(DateTime Value);
+public sealed record SessionStartsAtUtc(DateTime Value);

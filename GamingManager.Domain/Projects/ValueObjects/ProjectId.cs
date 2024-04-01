@@ -7,7 +7,7 @@ namespace GamingManager.Domain.Projects.ValueObjects;
 /// <summary>
 /// Strongly typed id for <see cref="Project"/>
 /// </summary>
-public readonly record struct ProjectId(Guid Value)
+public sealed record ProjectId(Guid Value)
 {
     /// <summary>
     /// Creates new unique <see cref="ProjectId"/>

@@ -1,3 +1,3 @@
 ﻿namespace GamingManager.Domain.Accounts.ValueObjects;
 
-public record Uuid(string Value);
+public sealed record Uuid(string Value);

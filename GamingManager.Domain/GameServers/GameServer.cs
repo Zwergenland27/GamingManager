@@ -80,7 +80,7 @@ public class GameServer : AggregateRoot<GameServerId>
 		if (Status == GameServerStatus.Starting) return Errors.GameServers.CannotShutdownStarting;
 		if (Status == GameServerStatus.Offline) return Errors.GameServers.CannotShutdownOffline;
 		if (ShutdownAt is null) return Errors.GameServers.NoShutdownScheduled;
-		if (ShutdownAt.Value.Value < DateTime.UtcNow) return Errors.GameServers.ShutdownTooEarly;
+		if (ShutdownAt.Value < DateTime.UtcNow) return Errors.GameServers.ShutdownTooEarly;
 		RaiseDomainEvent(new GameServerShutdownStartedEvent(Id));
 		return CanFail.Success();
 	}

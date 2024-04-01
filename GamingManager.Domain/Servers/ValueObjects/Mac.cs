@@ -2,7 +2,7 @@
 
 namespace GamingManager.Domain.Servers.ValueObjects;
 
-public class Mac
+public sealed record Mac
 {
     private Mac(string value)
     {

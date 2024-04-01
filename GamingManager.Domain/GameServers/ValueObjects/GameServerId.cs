@@ -8,7 +8,7 @@ namespace GamingManager.Domain.GameServers.ValueObjects;
 /// <summary>
 /// Strongly typed id for <see cref=">GameServer"/>
 /// </summary>
-public readonly record struct GameServerId(Guid Value)
+public sealed record GameServerId(Guid Value)
 {
     /// <summary>
     /// Creates new unique <see cref="GameServerId"/>

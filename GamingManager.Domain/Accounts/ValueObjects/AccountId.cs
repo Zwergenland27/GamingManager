@@ -6,7 +6,7 @@ namespace GamingManager.Domain.Accounts.ValueObjects;
 /// <summary>
 /// Strongly typed id for <see cref="Account"/>
 /// </summary>
-public readonly record struct AccountId(Guid Value)
+public sealed record AccountId(Guid Value)
 {
 	/// <summary>
 	/// Creates new unique <see cref="AccountId"/>

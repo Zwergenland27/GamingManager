@@ -1,6 +1,5 @@
 ﻿using GamingManager.Domain.Abstractions;
 using GamingManager.Domain.GameServers.ValueObjects;
-using GamingManager.Domain.ProjectServers;
 using GamingManager.Domain.Servers.ValueObjects;
 
 namespace GamingManager.Domain.GameServers.Events;

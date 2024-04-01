@@ -3,4 +3,4 @@
 /// <summary>
 /// The alias of a user
 /// </summary>
-public record Username(string Value);
+public sealed record Username(string Value);
