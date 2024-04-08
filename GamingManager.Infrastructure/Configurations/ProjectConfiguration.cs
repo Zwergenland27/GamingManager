@@ -68,10 +68,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
 			participantBuilder.WithOwner().HasForeignKey(participant => participant.Project);
 
-			participantBuilder.HasKey(participant => participant.Id);
-
-			participantBuilder.HasIndex(participant => new { participant.Id, participant.Project })
-				.IsUnique();
+			participantBuilder.HasKey(participant => new { participant.Project, participant.Id, });
 
 			participantBuilder.Property(participant => participant.Id)
 				.HasConversion(
@@ -114,22 +111,25 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 		{
 			banBuilder.ToTable("Bans");
 
-			banBuilder.WithOwner().HasForeignKey(ban => ban.Participant);
+			banBuilder.WithOwner().HasForeignKey(ban => new { ban.Project, ban.Participant });
 
-			banBuilder.HasKey(ban => ban.Id);
+			banBuilder.HasKey(ban => new { ban.Project, ban.Participant, ban.Id });
 
-			banBuilder.HasIndex(ban => new {ban.Id, ban.Participant})
-				.IsUnique();
-
-			banBuilder.Property(ban => ban.Id)
+			banBuilder.Property(ban => ban.Project)
 				.HasConversion(
-					banId => banId.Value,
-					value => new BanId(value));
+					projectId => projectId.Value,
+					value => new ProjectId(value));
+
 
 			banBuilder.Property(ban => ban.Participant)
 				.HasConversion(
 					participantId => participantId.Value,
 					value => new ParticipantId(value));
+
+			banBuilder.Property(ban => ban.Id)
+				.HasConversion(
+					banId => banId.Value,
+					value => new BanId(value));
 
 			banBuilder.Property(ban => ban.Reason)
 				.HasConversion(
@@ -150,12 +150,9 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 		{
 			sessionBuilder.ToTable("Sessions");
 
-			sessionBuilder.WithOwner().HasForeignKey(session => session.Participant);
+			sessionBuilder.WithOwner().HasForeignKey(session => new { session.Project, session.Participant });
 
-			sessionBuilder.HasKey(session => session.Id);
-
-			sessionBuilder.HasIndex(session => new { session.Id, session.Participant })
-				.IsUnique();
+			sessionBuilder.HasKey(session => new { session.Project, session.Participant, session.Id });
 
 			sessionBuilder.Property(session => session.Id)
 				.HasConversion(
@@ -189,10 +186,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
 			teamMemberBuilder.WithOwner().HasForeignKey(teamMember => teamMember.Project);
 
-			teamMemberBuilder.HasKey(teamMember => teamMember.Id);
-
-			teamMemberBuilder.HasIndex(teamMember => new { teamMember.Id, teamMember.Project })
-				.IsUnique();
+			teamMemberBuilder.HasKey(teamMember => new { teamMember.Project, teamMember.Id });
 
 			teamMemberBuilder.Property(teamMember => teamMember.Id)
 				.HasConversion(

@@ -11,7 +11,7 @@ public class CreateGameCommandHandler(
 {
 	public async Task<CanFail<Game>> Handle(CreateGameCommand request, CancellationToken cancellationToken)
 	{
-		var nameUnique = await gameRepository.IsNameUnique(request.Name);
+		var nameUnique = await gameRepository.IsNameUsed(request.Name);
 		if (!nameUnique) return Errors.Games.DuplicateName;
 
 		var gameResult = Game.Create(request.Name);

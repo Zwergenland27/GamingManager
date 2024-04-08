@@ -8,9 +8,11 @@ namespace GamingManager.Domain.Projects.Entities;
 public class Session : Entity<SessionId>
 {
 	internal Session(
+		ProjectId projectId,
 		ParticipantId participantId,
 		SessionStartsAtUtc start) : base(SessionId.CreateNew())
 	{
+		Project = projectId;
 		Participant = participantId;
 		Start = start;
 	}
@@ -18,6 +20,8 @@ public class Session : Entity<SessionId>
 #pragma warning disable CS8618
 	private Session() : base(default!) { }
 #pragma warning restore
+	
+	public ProjectId Project { get; private init; }
 	
 	public ParticipantId Participant { get; private init; }
 

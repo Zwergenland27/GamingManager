@@ -30,7 +30,7 @@ public static class DependencyInjection
 
 	private static void AddGamingManagerContext(this IServiceCollection services, IConfiguration configuration)
 	{
-		var connectionString = configuration.GetConnectionString("TelemetryDbConnection");
+		var connectionString = configuration.GetConnectionString("GameServerDb");
 		services.AddDbContext<GamingManagerContext>((sp, options) =>
 		{
 			var interceptor = sp.GetService<PublishDomainEventsInterceptor>()!;

@@ -192,6 +192,9 @@ namespace GamingManager.Infrastructure.Migrations
                 {
                     b.OwnsMany("GamingManager.Domain.Projects.Entities.Participant", "Participants", b1 =>
                         {
+                            b1.Property<Guid>("Project")
+                                .HasColumnType("uuid");
+
                             b1.Property<Guid>("Id")
                                 .HasColumnType("uuid");
 
@@ -204,18 +207,10 @@ namespace GamingManager.Infrastructure.Migrations
                             b1.Property<TimeSpan>("PlayTime")
                                 .HasColumnType("interval");
 
-                            b1.Property<Guid>("Project")
-                                .HasColumnType("uuid");
-
                             b1.Property<DateTime>("Since")
                                 .HasColumnType("timestamp with time zone");
 
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("Project");
-
-                            b1.HasIndex("Id", "Project")
-                                .IsUnique();
+                            b1.HasKey("Project", "Id");
 
                             b1.ToTable("Participants", (string)null);
 
@@ -224,6 +219,12 @@ namespace GamingManager.Infrastructure.Migrations
 
                             b1.OwnsMany("GamingManager.Domain.Projects.Entities.Ban", "Bans", b2 =>
                                 {
+                                    b2.Property<Guid>("Project")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<Guid>("Participant")
+                                        .HasColumnType("uuid");
+
                                     b2.Property<Guid>("Id")
                                         .HasColumnType("uuid");
 
@@ -233,51 +234,47 @@ namespace GamingManager.Infrastructure.Migrations
                                     b2.Property<TimeSpan?>("Duration")
                                         .HasColumnType("interval");
 
-                                    b2.Property<Guid>("Participant")
-                                        .HasColumnType("uuid");
-
                                     b2.Property<string>("Reason")
                                         .IsRequired()
                                         .HasColumnType("text");
 
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("Participant");
-
-                                    b2.HasIndex("Id", "Participant")
-                                        .IsUnique();
+                                    b2.HasKey("Project", "Participant", "Id");
 
                                     b2.ToTable("Bans", (string)null);
 
                                     b2.WithOwner()
-                                        .HasForeignKey("Participant");
+                                        .HasForeignKey("Project", "Participant");
                                 });
 
                             b1.OwnsMany("GamingManager.Domain.Projects.Entities.Session", "Sessions", b2 =>
                                 {
-                                    b2.Property<Guid>("Id")
+                                    b2.Property<Guid>("Project")
                                         .HasColumnType("uuid");
 
                                     b2.Property<Guid>("Participant")
+                                        .HasColumnType("uuid");
+
+                                    b2.Property<Guid>("Id")
                                         .HasColumnType("uuid");
 
                                     b2.Property<DateTime>("Start")
                                         .HasColumnType("timestamp with time zone");
 
-                                    b2.HasKey("Id");
-
-                                    b2.HasIndex("Participant");
-
-                                    b2.HasIndex("Id", "Participant")
-                                        .IsUnique();
+                                    b2.HasKey("Project", "Participant", "Id");
 
                                     b2.ToTable("Sessions", (string)null);
 
                                     b2.WithOwner()
-                                        .HasForeignKey("Participant");
+                                        .HasForeignKey("Project", "Participant");
 
                                     b2.OwnsOne("GamingManager.Domain.Projects.ValueObjects.SessionEndsAtUtc", "End", b3 =>
                                         {
+                                            b3.Property<Guid>("SessionProject")
+                                                .HasColumnType("uuid");
+
+                                            b3.Property<Guid>("SessionParticipant")
+                                                .HasColumnType("uuid");
+
                                             b3.Property<Guid>("SessionId")
                                                 .HasColumnType("uuid");
 
@@ -287,12 +284,12 @@ namespace GamingManager.Infrastructure.Migrations
                                             b3.Property<bool>("Irregular")
                                                 .HasColumnType("boolean");
 
-                                            b3.HasKey("SessionId");
+                                            b3.HasKey("SessionProject", "SessionParticipant", "SessionId");
 
                                             b3.ToTable("Sessions");
 
                                             b3.WithOwner()
-                                                .HasForeignKey("SessionId");
+                                                .HasForeignKey("SessionProject", "SessionParticipant", "SessionId");
                                         });
 
                                     b2.Navigation("End");
@@ -305,10 +302,10 @@ namespace GamingManager.Infrastructure.Migrations
 
                     b.OwnsMany("GamingManager.Domain.Projects.Entities.TeamMember", "Team", b1 =>
                         {
-                            b1.Property<Guid>("Id")
+                            b1.Property<Guid>("Project")
                                 .HasColumnType("uuid");
 
-                            b1.Property<Guid>("Project")
+                            b1.Property<Guid>("Id")
                                 .HasColumnType("uuid");
 
                             b1.Property<int>("Role")
@@ -320,12 +317,7 @@ namespace GamingManager.Infrastructure.Migrations
                             b1.Property<Guid>("User")
                                 .HasColumnType("uuid");
 
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("Project");
-
-                            b1.HasIndex("Id", "Project")
-                                .IsUnique();
+                            b1.HasKey("Project", "Id");
 
                             b1.ToTable("TeamMembers", (string)null);
 

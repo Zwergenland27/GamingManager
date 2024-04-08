@@ -66,7 +66,7 @@ public class Participant : Entity<ParticipantId>
     {
         if(IsCurrentlyBanned) return Errors.Projects.Participants.AlreadyBanned;
 
-        var ban = Ban.CreatePermanent(Id, reason, DateTime.UtcNow);
+        var ban = Ban.CreatePermanent(Project, Id, reason, DateTime.UtcNow);
         _bans.Add(ban);
 
         RaiseDomainEvent(new ParticipantBannedEvent(Project, Id, ban));
@@ -77,7 +77,7 @@ public class Participant : Entity<ParticipantId>
 	{
 		if (IsCurrentlyBanned) return Errors.Projects.Participants.AlreadyBanned;
 
-		var ban = Ban.CreateTemporary(Id, reason, DateTime.UtcNow, duration);
+		var ban = Ban.CreateTemporary(Project, Id, reason, DateTime.UtcNow, duration);
 		_bans.Add(ban);
 
 		RaiseDomainEvent(new ParticipantBannedEvent(Project, Id, ban));
@@ -109,7 +109,7 @@ public class Participant : Entity<ParticipantId>
             else if (joinTime.Value >= lastSession.End.EndTime) return Errors.Projects.Participants.JoinBeforePreviousSession;
 		}
 
-        var currentSession = new Session(Id, joinTime);
+        var currentSession = new Session(Project, Id, joinTime);
         _sessions.Add(currentSession);
         Online = true;
         RaiseDomainEvent(new ParticipantJoinedEvent(Project, Id, joinTime));

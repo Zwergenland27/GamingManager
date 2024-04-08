@@ -6,6 +6,7 @@ namespace GamingManager.Domain.Projects.Entities;
 public class Ban : Entity<BanId>
 {
 	private Ban(
+		ProjectId projectId,
 		ParticipantId participantId,
 		Reason reason,
 		DateTime bannedAtUtc,
@@ -21,6 +22,8 @@ public class Ban : Entity<BanId>
 	private Ban() : base(default!) { }
 #pragma warning restore
 
+	public ProjectId Project { get; private init; }
+
 	public ParticipantId Participant { get; private init; }
 
 	public Reason Reason { get; private init; }
@@ -29,13 +32,13 @@ public class Ban : Entity<BanId>
 
 	public TimeSpan? Duration { get; private init; }
 
-	public static Ban CreatePermanent(ParticipantId participantId, Reason reason, DateTime bannedAtUtc)
+	public static Ban CreatePermanent(ProjectId projectId, ParticipantId participantId, Reason reason, DateTime bannedAtUtc)
 	{
-		return new Ban(participantId, reason, bannedAtUtc, null);
+		return new Ban(projectId, participantId, reason, bannedAtUtc, null);
 	}
 
-	public static Ban CreateTemporary(ParticipantId participantId, Reason reason, DateTime bannedAtUtc, TimeSpan duration)
+	public static Ban CreateTemporary(ProjectId projectId, ParticipantId participantId, Reason reason, DateTime bannedAtUtc, TimeSpan duration)
 	{
-		return new Ban(participantId, reason, bannedAtUtc, duration);
+		return new Ban(projectId, participantId, reason, bannedAtUtc, duration);
 	}
 }

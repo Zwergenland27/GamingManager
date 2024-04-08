@@ -120,7 +120,7 @@ namespace GamingManager.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Participants", x => x.Id);
+                    table.PrimaryKey("PK_Participants", x => new { x.Project, x.Id });
                     table.ForeignKey(
                         name: "FK_Participants_Projects_Project",
                         column: x => x.Project,
@@ -141,7 +141,7 @@ namespace GamingManager.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TeamMembers", x => x.Id);
+                    table.PrimaryKey("PK_TeamMembers", x => new { x.Project, x.Id });
                     table.ForeignKey(
                         name: "FK_TeamMembers_Projects_Project",
                         column: x => x.Project,
@@ -155,6 +155,7 @@ namespace GamingManager.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Project = table.Column<Guid>(type: "uuid", nullable: false),
                     Participant = table.Column<Guid>(type: "uuid", nullable: false),
                     Reason = table.Column<string>(type: "text", nullable: false),
                     BannedAtUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -162,12 +163,12 @@ namespace GamingManager.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Bans", x => x.Id);
+                    table.PrimaryKey("PK_Bans", x => new { x.Project, x.Participant, x.Id });
                     table.ForeignKey(
-                        name: "FK_Bans_Participants_Participant",
-                        column: x => x.Participant,
+                        name: "FK_Bans_Participants_Project_Participant",
+                        columns: x => new { x.Project, x.Participant },
                         principalTable: "Participants",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Project", "Id" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -176,6 +177,7 @@ namespace GamingManager.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Project = table.Column<Guid>(type: "uuid", nullable: false),
                     Participant = table.Column<Guid>(type: "uuid", nullable: false),
                     Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     End_EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -183,12 +185,12 @@ namespace GamingManager.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sessions", x => x.Id);
+                    table.PrimaryKey("PK_Sessions", x => new { x.Project, x.Participant, x.Id });
                     table.ForeignKey(
-                        name: "FK_Sessions_Participants_Participant",
-                        column: x => x.Participant,
+                        name: "FK_Sessions_Participants_Project_Participant",
+                        columns: x => new { x.Project, x.Participant },
                         principalTable: "Participants",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Project", "Id" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -203,59 +205,15 @@ namespace GamingManager.Infrastructure.Migrations
                 columns: new[] { "Game", "Uuid" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bans_Id_Participant",
-                table: "Bans",
-                columns: new[] { "Id", "Participant" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Bans_Participant",
-                table: "Bans",
-                column: "Participant");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Games_Name",
                 table: "Games",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Participants_Id_Project",
-                table: "Participants",
-                columns: new[] { "Id", "Project" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Participants_Project",
-                table: "Participants",
-                column: "Project");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Projects_Name",
                 table: "Projects",
                 column: "Name");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Sessions_Id_Participant",
-                table: "Sessions",
-                columns: new[] { "Id", "Participant" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Sessions_Participant",
-                table: "Sessions",
-                column: "Participant");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeamMembers_Id_Project",
-                table: "TeamMembers",
-                columns: new[] { "Id", "Project" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TeamMembers_Project",
-                table: "TeamMembers",
-                column: "Project");
         }
 
         /// <inheritdoc />
