@@ -23,9 +23,10 @@ public class Project : AggregateRoot<ProjectId>
 	private readonly List<TeamMember> _team = [];
 
 	private Project(
+		ProjectId id,
 		GameId gameId,
 		ProjectName name,
-		ProjectStartsAtUtc start) : base(ProjectId.CreateNew())
+		ProjectStartsAtUtc start) : base(id)
 	{
 		Game = gameId;
 		Name = name;
@@ -54,11 +55,11 @@ public class Project : AggregateRoot<ProjectId>
 
 	public bool PlayersOnline => _participants.Any(participant => participant.Online);
 
-	internal static CanFail<Project> Create(ProjectName name, Game game, ProjectStartsAtUtc start, User owner)
+	public static CanFail<Project> Create(ProjectName name, Game game, ProjectStartsAtUtc start, User owner)
 	{
-		var project = new Project(game.Id, name, start);
+		var project = new Project(ProjectId.CreateNew(), game.Id, name, start);
 		var organisatorResult = project.AddToTeam(owner, TeamRole.Administrator);
-		if (organisatorResult.HasFailed) return CanFail<Project>.FromFailure(organisatorResult);
+		if (organisatorResult.HasFailed) return organisatorResult.Errors;
 		project.RaiseDomainEvent(new ProjectCreatedEvent(project.Id));
 		return project;
 	}
@@ -80,7 +81,7 @@ public class Project : AggregateRoot<ProjectId>
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		var leaveResult = participant.Leave(leaveTime, irregular);
-		if (leaveResult.HasFailed) return CanFail.FromFailure(leaveResult);
+		if (leaveResult.HasFailed) return leaveResult.Errors;
 
 		if(!_participants.Any(participant => participant.Online))
 		{
@@ -90,25 +91,25 @@ public class Project : AggregateRoot<ProjectId>
 		return CanFail.Success();
 	}
 
-	public CanFail<Ban> BanPermanent(ParticipantId participantId, Reason reason)
+	public CanFail<Ban> BanPermanent(Account account, Reason reason)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
+		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		return participant.BanPermanent(reason);
 	}
 
-	public CanFail<Ban> BanTemporary(ParticipantId participantId, Reason reason, TimeSpan duration)
+	public CanFail<Ban> BanTemporary(Account account, Reason reason, TimeSpan duration)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
+		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		return participant.BanTemporary(reason, duration);
 	}
 
-	public CanFail Pardon(ParticipantId participantId)
+	public CanFail Pardon(Account account)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
+		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		return participant.Pardon();
@@ -135,9 +136,10 @@ public class Project : AggregateRoot<ProjectId>
 		return CanFail.Success();
 	}
 
-	public CanFail RemoveFromTeam(TeamMember teamMember)
+	public CanFail RemoveFromTeam(User user)
 	{
-		if (!_team.Contains(teamMember)) return Errors.Projects.Team.NoMember;
+		var teamMember = _team.FirstOrDefault(teamMember => teamMember.User == user.Id);
+		if (teamMember is null) return Errors.Projects.Team.NoMember;
 
 		if (!_team.Any(teamMember =>
 			teamMember.Id != teamMember.Id &&

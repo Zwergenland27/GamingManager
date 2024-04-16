@@ -20,6 +20,9 @@ private static void ConfigureGameServersTable(EntityTypeBuilder<GameServer> buil
 
 		builder.HasKey(gameServer => gameServer.Id);
 
+		builder.HasIndex(gameServer => gameServer.ServerName)
+			.IsUnique();
+
 		builder.Property(gameServer => gameServer.Id)
 			.HasConversion(
 				id => id.Value,
@@ -34,6 +37,11 @@ private static void ConfigureGameServersTable(EntityTypeBuilder<GameServer> buil
 			.HasConversion(
 				projectId => projectId.Value,
 				value => new ProjectId(value));
+
+		builder.Property(GameServer => GameServer.ServerName)
+			.HasConversion(
+				servername => servername.Value,
+				value => new ServerName(value));
 
 		builder.Property(gameServer => gameServer.Status);
 

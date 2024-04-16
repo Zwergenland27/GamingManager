@@ -10,6 +10,27 @@ public static partial class Errors
 	public static class GameServers
 	{
 		/// <summary>
+		/// The game server with this id could not be found
+		/// </summary>
+		public static Error IdNotFound => Error.NotFound(
+			"GameServer.IdNotFound",
+			"A game server with this id does not exist");
+
+		/// <summary>
+		/// The game server with this name could not be found
+		/// </summary>
+		public static Error ServerNameNotFound => Error.NotFound(
+			"GameServer.ServerNameNotFound",
+			"A server with this name does not exist");
+
+		/// <summary>
+		/// A game server with this host name already exists in the database
+		/// </summary>
+		public static Error DuplicateServerName => Error.Conflict(
+			"GameServer.DuplicateServerName",
+			"A game server with this name already exist");
+
+		/// <summary>
 		/// The operation can only be done when the game server is in maintenance mode
 		/// </summary>
 		public static Error MaintenanceNeeded => Error.Conflict(
@@ -99,6 +120,13 @@ public static partial class Errors
 		public static Error StartedInFuture => Error.Conflict(
 			"GameServer.StartedInFuture",
 			"The game server cannot be started in the future");
+
+		/// <summary>
+		/// The project on the game server is still active
+		/// </summary>
+		public static Error ActiveProject => Error.Conflict(
+			"GameServer.ActiveProject",
+			"The project on the game server is still active");
 
 		/// <summary>
 		/// Errors that occur when working with <see cref="GameServerId"/>

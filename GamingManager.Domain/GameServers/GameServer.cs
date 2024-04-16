@@ -13,9 +13,11 @@ public class GameServer : AggregateRoot<GameServerId>
 {
 	private GameServer(
 		ProjectId projectId,
+		ServerName servername,
 		GameServerAutoShutdownDelay shutdownDelay) : base(GameServerId.CreateNew())
 	{
 		Project = projectId;
+		ServerName = servername;
 		Status = GameServerStatus.Offline;
 		ShutdownDelay = shutdownDelay;
 		Maintenance = true;
@@ -28,7 +30,9 @@ public class GameServer : AggregateRoot<GameServerId>
 
 	public ServerId? HostedOn { get; private set; }
 
-	public ProjectId Project { get; }
+	public ProjectId Project { get; private init; }
+
+	public ServerName ServerName { get; private init; }
 
 	public GameServerStatus Status { get; private set; }
 
@@ -40,9 +44,9 @@ public class GameServer : AggregateRoot<GameServerId>
 
 	public bool Unstartable { get; private set; }
 
-	public static CanFail<GameServer> Create(Project project, GameServerAutoShutdownDelay shutDownDelay)
+	public static CanFail<GameServer> Create(Project project, ServerName serverName, GameServerAutoShutdownDelay shutDownDelay)
 	{
-		var gameServer = new GameServer(project.Id, shutDownDelay);
+		var gameServer = new GameServer(project.Id, serverName, shutDownDelay);
 		gameServer.RaiseDomainEvent(new GameServerCreatedEvent(gameServer.Id));
 		return gameServer;
 	}

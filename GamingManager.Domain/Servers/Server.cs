@@ -12,10 +12,12 @@ namespace GamingManager.Domain.Servers;
 public class Server : AggregateRoot<ServerId>
 {
 	private Server(
-		Alias alias,
+		Hostname hostname,
+		Address address,
 		Mac mac) : base(ServerId.CreateNew())
 	{
-		Alias = alias;
+		Hostname = hostname;
+		Address = address;
 		Mac = mac;
 		Status = ServerStatus.Offline;
 		Maintenance = true;
@@ -26,9 +28,11 @@ public class Server : AggregateRoot<ServerId>
 	private Server() : base(default!) { }
 #pragma warning restore CS8618
 
-	public Alias Alias { get; set; }
+	public Hostname Hostname { get; private set; }
 
-	public Mac Mac { get; set; }
+	public Address Address { get; set; }
+
+	public Mac Mac { get; private init; }
 
 	public ServerStatus Status { get; private set; }
 
@@ -40,9 +44,19 @@ public class Server : AggregateRoot<ServerId>
 
 	public bool PossiblyUnstartable { get; private set; }
 
-	public static CanFail<Server> Create(Alias alias, Mac mac)
+	public static CanFail<Server> Create(Hostname hostname, Address address, Mac mac)
 	{
-		return new Server(alias, mac);
+		return new Server(hostname, address, mac);
+	}
+
+	public void ChangeHostname(Hostname hostname)
+	{
+		Hostname = hostname;
+	}
+
+	public void ChangeAddress(Address address)
+	{
+		Address = address;
 	}
 
 	public CanFail Start()

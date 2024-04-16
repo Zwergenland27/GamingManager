@@ -32,8 +32,15 @@ public static partial class Errors
 		/// A user with this username already exists in the database
 		/// </summary>
 		public static Error DuplicateUsername => Error.Conflict(
-			"HWServer.DuplicateUsername",
+			"User.DuplicateUsername",
 			"A user with this username already exist");
+
+		/// <summary>
+		/// A user with this email already exists
+		/// </summary>
+		public static Error DuplicateEmail => Error.Conflict(
+			"User.DuplicateEmail",
+			"A user with this email already exists");
 
 		/// <summary>
 		/// Errors that occur when working with <see cref="UserId"/>

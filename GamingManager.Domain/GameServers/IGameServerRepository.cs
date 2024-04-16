@@ -9,4 +9,8 @@ public interface IGameServerRepository
 	void Delete(GameServer gameServer);
 
 	Task<GameServer?> GetAsync(GameServerId id);
+
+	Task<bool> IsServerNameUniqeAsync(ServerName serverName);
+
+	Task<GameServer?> GetAsync(ServerName serverName);
 }

@@ -23,6 +23,13 @@ public static partial class Errors
 			"Project.IdNotFound",
 			"A project with this id does not exist");
 
+		/// <summary>
+		/// A project with this name does not exist
+		/// </summary>
+		public static Error NameNotFound => Error.NotFound(
+			"Project.NameNotFound",
+			"A project with this name does not exist");
+
 
 		/// <summary>
 		/// The provided start time is in the past

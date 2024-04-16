@@ -23,10 +23,10 @@ public class ServerConfiguration : IEntityTypeConfiguration<Server>
 				id => id.Value,
 				value => new ServerId(value));
 
-		builder.Property(server => server.Alias)
+		builder.Property(server => server.Address)
 			.HasConversion(
 				alias => alias.Value,
-				value => Alias.Create(value).Value);
+				value => Address.Create(value).Value);
 
 		builder.Property(server => server.Mac)
 			.HasConversion(

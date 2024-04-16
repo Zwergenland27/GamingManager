@@ -7,6 +7,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <UserSecretsId>c958eb7d-7c7a-47d0-acc0-99abd2f0e73c</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,10 +21,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -22,18 +22,46 @@ public static partial class Errors
 			"A server with this id does not exist");
 
 		/// <summary>
-		/// The server with this alias could not be found
+		/// The server with this host name could not be found
 		/// </summary>
-		public static Error AliasNotFound => Error.NotFound(
-			"Server.AliasNotFound",
-			"A server with this alias does not exist");
+		public static Error HostnameNotFound => Error.NotFound(
+			"Server.HostnameNotFound",
+			"A server with this host name does not exist");
 
 		/// <summary>
-		/// A server with this alias already exists in the database
+		/// A server with this host name already exists in the database
 		/// </summary>
-		public static Error DuplicateAlias => Error.Conflict(
-			"Server.DuplicateAlias",
-			"A server with this alias already exist");
+		public static Error DuplicateHostname => Error.Conflict(
+			"Server.DuplicateHostname",
+			"A server with this host name already exist");
+
+		/// <summary>
+		/// The server with this address could not be found
+		/// </summary>
+		public static Error AddressNotFound => Error.NotFound(
+			"Server.AddressNotFound",
+			"A server with this address does not exist");
+
+		/// <summary>
+		/// A server with this address already exists in the database
+		/// </summary>
+		public static Error DuplicateAddress => Error.Conflict(
+			"Server.DuplicateAddress",
+			"A server with this address already exist");
+
+		/// <summary>
+		/// The server with this mac could not be found
+		/// </summary>
+		public static Error MacNotFound => Error.NotFound(
+			"Server.MacNotFound",
+			"A server with this mac does not exist");
+
+		/// <summary>
+		/// A server with this mac already exists in the database
+		/// </summary>
+		public static Error DuplicateMac => Error.Conflict(
+			"Server.DuplicateMac",
+			"A server with this mac already exist");
 
 		/// <summary>
 		/// The provided ping is before the last ping
@@ -104,6 +132,13 @@ public static partial class Errors
 		public static Error CannotShutdownOffline => Error.Conflict(
 			"Server.CannotStopOffline",
 			"Cannot shutdown a server that is currently offline");
+
+		/// <summary>
+		/// The server is currently used by at least one game server and cannot be deleted
+		/// </summary>
+		public static Error InUse => Error.Conflict(
+			"Server.InUse",
+			"The server is currently used by at least one game server and cannot be deleted");
 
 		/// <summary>
 		/// Errors that occur when working with <see cref="ServerId"/>

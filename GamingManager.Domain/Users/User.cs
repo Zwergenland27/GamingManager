@@ -11,8 +11,8 @@ namespace GamingManager.Domain.Users;
 public class User : AggregateRoot<UserId>
 {
 	private User(
-		Firstname firstname,
-		Lastname lastname,
+		Firstname? firstname,
+		Lastname? lastname,
 		Email email,
 		Username username,
 		Role role) : base(UserId.CreateNew())
@@ -42,8 +42,8 @@ public class User : AggregateRoot<UserId>
 	/// Creates new <see cref="User"/> instance
 	/// </summary>
 	public static CanFail<User> Create(
-		Firstname firstname,
-		Lastname lastname,
+		Firstname? firstname,
+		Lastname? lastname,
 		Email email,
 		Username username)
 	{

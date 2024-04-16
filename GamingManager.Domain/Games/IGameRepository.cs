@@ -12,5 +12,5 @@ public interface IGameRepository
 
 	Task<Game?> GetAsync(GameName name);
 
-	Task<bool> IsNameUsed(GameName name);
+	Task<bool> IsNameUnique(GameName name);
 }

@@ -31,18 +31,18 @@ public class Account : AggregateRoot<AccountId>
 	public AccountName Name { get; internal set; }
 	public bool IsConfirmed => User is not null && Uuid is not null;
 
-	internal static CanFail<Account> Create(Game game, Uuid uuid, AccountName name)
+	public static CanFail<Account> Create(Game game, Uuid uuid, AccountName name)
 	{
 		var account = new Account(game.Id, uuid, name);
 		account.RaiseDomainEvent(new AccountCreatedEvent(account.Id, null));
 		return account;
 	}
 
-	internal static CanFail<Account> Create(Game game, User user, AccountName name)
+	public static CanFail<Account> Create(Game game, User user, AccountName name)
 	{
 		var account = new Account(game.Id, null, name);
 		var assignResult = account.AssignUser(user);
-		if (assignResult.HasFailed) return CanFail<Account>.FromFailure(assignResult);
+		if (assignResult.HasFailed) return assignResult.Errors;
 		account.RaiseDomainEvent(new AccountCreatedEvent(account.Id, user.Id));
 		return account;
 	}

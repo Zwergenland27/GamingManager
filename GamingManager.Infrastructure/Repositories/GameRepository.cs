@@ -28,8 +28,8 @@ public class GameRepository(GamingManagerContext context) : IGameRepository
 		return await _context.Games.FirstOrDefaultAsync(game => game.Name == name);
 	}
 
-	public async Task<bool> IsNameUsed(GameName name)
+	public async Task<bool> IsNameUnique(GameName name)
 	{
-		return await _context.Games.AnyAsync(game => game.Name == name);
+		return !await _context.Games.AnyAsync(game => game.Name == name);
 	}
 }

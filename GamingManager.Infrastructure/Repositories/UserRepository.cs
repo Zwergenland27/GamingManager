@@ -21,4 +21,14 @@ public class UserRepository(GamingManagerContext context) : IUserRepository
 	{
 		return await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
 	}
+
+	public async Task<bool> IsEmailUnique(Email email)
+	{
+		return !await _context.Users.AnyAsync(user => user.Email == email);
+	}
+
+	public async Task<bool> IsUsernameUnique(Username username)
+	{
+		return !await _context.Users.AnyAsync(user => user.Username == username);
+	}
 }
