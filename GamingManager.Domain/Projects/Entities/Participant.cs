@@ -3,6 +3,7 @@ using GamingManager.Domain.Abstractions;
 using GamingManager.Domain.Accounts;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.DomainErrors;
+using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Projects.Events;
 using GamingManager.Domain.Projects.ValueObjects;
 using System.Net.Http.Headers;
@@ -98,7 +99,7 @@ public class Participant : Entity<ParticipantId>
         return CanFail.Success();
     }
 
-    internal CanFail Join(SessionStartsAtUtc joinTime)
+    internal CanFail Join(GameServerId gameServerId, SessionStartsAtUtc joinTime)
     {
         var lastSession = _sessions
             .OrderBy(session => session.Start)
@@ -112,12 +113,12 @@ public class Participant : Entity<ParticipantId>
         var currentSession = new Session(Project, Id, joinTime);
         _sessions.Add(currentSession);
         Online = true;
-        RaiseDomainEvent(new ParticipantJoinedEvent(Project, Id, joinTime));
+        RaiseDomainEvent(new ParticipantJoinedEvent(Project, Id, gameServerId, joinTime));
         return CanFail.Success();
 
     }
 
-    internal CanFail Leave(SessionEndsAtUtc leaveTime, bool irregular = false)
+    internal CanFail Leave(GameServerId gameServerId, SessionEndsAtUtc leaveTime, bool irregular = false)
     {
         var lastSession = _sessions
             .OrderBy(session => session.Start)
@@ -129,7 +130,7 @@ public class Participant : Entity<ParticipantId>
 		lastSession.Stop(leaveTime, irregular);
         Online = false;
         _playTime.Add(lastSession.Duration);
-        RaiseDomainEvent(new ParticipantLeftEvent(Project, Id, leaveTime, irregular));
+        RaiseDomainEvent(new ParticipantLeftEvent(Project, Id, gameServerId, leaveTime, irregular));
 		return CanFail.Success();
 	}
 }

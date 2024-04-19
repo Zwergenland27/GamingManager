@@ -14,12 +14,14 @@ public class Server : AggregateRoot<ServerId>
 	private Server(
 		Hostname hostname,
 		Address address,
-		Mac mac) : base(ServerId.CreateNew())
+		Mac mac,
+		ServerAutoShutdownDelay shutdownDelay) : base(ServerId.CreateNew())
 	{
 		Hostname = hostname;
 		Address = address;
 		Mac = mac;
 		Status = ServerStatus.Offline;
+		ShutdownDelay = shutdownDelay;
 		Maintenance = true;
 		PossiblyUnstartable = false;
 	}
@@ -36,6 +38,8 @@ public class Server : AggregateRoot<ServerId>
 
 	public ServerStatus Status { get; private set; }
 
+	public ServerAutoShutdownDelay ShutdownDelay { get; set; }
+
 	public ServerShutdownAtUtc? ShutdownAt { get; private set; }
 
 	public HeartbeatReceivedAtUtc? LastHeartbeatAt { get; private set; }
@@ -44,9 +48,9 @@ public class Server : AggregateRoot<ServerId>
 
 	public bool PossiblyUnstartable { get; private set; }
 
-	public static CanFail<Server> Create(Hostname hostname, Address address, Mac mac)
+	public static CanFail<Server> Create(Hostname hostname, Address address, Mac mac, ServerAutoShutdownDelay shutdownDelay)
 	{
-		return new Server(hostname, address, mac);
+		return new Server(hostname, address, mac, shutdownDelay);
 	}
 
 	public void ChangeHostname(Hostname hostname)
@@ -66,7 +70,7 @@ public class Server : AggregateRoot<ServerId>
 		if (Status == ServerStatus.Starting) return Errors.Servers.AlreadyStarting;
 
 		Status = ServerStatus.Starting;
-		RaiseDomainEvent(new ServerStatusChangedEvent(Id));
+		RaiseDomainEvent(new ServerStatusChangedEvent(Id, Status));
 		return CanFail.Success();
 	}
 
@@ -74,12 +78,12 @@ public class Server : AggregateRoot<ServerId>
 	{
 		Status = ServerStatus.Offline;
 		PossiblyUnstartable = true;
-		RaiseDomainEvent(new ServerStatusChangedEvent(Id));
+		RaiseDomainEvent(new ServerStatusChangedEvent(Id, Status));
 	}
 
 	public CanFail ScheduleShutdown(ServerShutdownAtUtc shutdownAtUtc)
 	{
-		if (shutdownAtUtc.Value < DateTime.UtcNow) return Errors.Servers.ShutdownInPast;
+        if (shutdownAtUtc.Value < DateTime.UtcNow) return Errors.Servers.ShutdownInPast;
 
 		ShutdownAt = shutdownAtUtc;
 		RaiseDomainEvent(new ServerShutdownScheduledEvent(Id));
@@ -103,22 +107,24 @@ public class Server : AggregateRoot<ServerId>
 
 		Status = ServerStatus.Offline;
 		ShutdownAt = null;
-		RaiseDomainEvent(new ServerStatusChangedEvent(Id));
+		RaiseDomainEvent(new ServerStatusChangedEvent(Id, Status));
 		return CanFail.Success();
 	}
 
 	public CanFail BeginMaintenance()
 	{
+		throw new NotImplementedException("Not working yet.");
 		Maintenance = true;
-		RaiseDomainEvent(new ServerStatusChangedEvent(Id));
+		RaiseDomainEvent(new ServerStatusChangedEvent(Id, Status));
 		return CanFail.Success();
 	}
 
 	public CanFail FinishMaintenance()
 	{
+		throw new NotImplementedException("Not working yet.");
 		if (!Maintenance) return Errors.Servers.NoMaintenance;
 		Maintenance = false;
-		RaiseDomainEvent(new ServerStatusChangedEvent(Id));
+		RaiseDomainEvent(new ServerStatusChangedEvent(Id, Status));
 		return CanFail.Success();
 	}
 
@@ -132,7 +138,7 @@ public class Server : AggregateRoot<ServerId>
 		{
 			PossiblyUnstartable = false;
 			Status = ServerStatus.Online;
-			RaiseDomainEvent(new ServerStatusChangedEvent(Id));
+			RaiseDomainEvent(new ServerStatusChangedEvent(Id, Status));
 		}
 
 		return CanFail.Success();

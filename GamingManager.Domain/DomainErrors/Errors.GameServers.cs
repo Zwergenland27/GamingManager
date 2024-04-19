@@ -31,6 +31,13 @@ public static partial class Errors
 			"A game server with this name already exist");
 
 		/// <summary>
+		/// The game server is not hosted on any server
+		/// </summary>
+		public static Error ServerNotHosted => Error.Conflict(
+			"GameServer.ServerNotHosted",
+			"The game server is not hosted on any server");
+
+		/// <summary>
 		/// The operation can only be done when the game server is in maintenance mode
 		/// </summary>
 		public static Error MaintenanceNeeded => Error.Conflict(
@@ -113,13 +120,6 @@ public static partial class Errors
 		public static Error AlreadyStarting => Error.Conflict(
 			"GameServer.AlreadyStarting",
 			"The game server is already starting");
-
-		/// <summary>
-		/// The game server cannot be started in the future
-		/// </summary>
-		public static Error StartedInFuture => Error.Conflict(
-			"GameServer.StartedInFuture",
-			"The game server cannot be started in the future");
 
 		/// <summary>
 		/// The project on the game server is still active

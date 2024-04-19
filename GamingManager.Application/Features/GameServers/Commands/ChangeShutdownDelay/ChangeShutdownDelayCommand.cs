@@ -1,6 +1,6 @@
 ﻿using GamingManager.Application.Abstractions;
 using GamingManager.Domain.GameServers.ValueObjects;
 
-namespace GamingManager.Application.Features.GameServers.Commands.ChangeShutdownDelay;
+namespace GamingManager.Application.Features.GameServers.Events.ChangeShutdownDelay;
 
-public record ChangeShutdownDelayCommand(ServerName ServerName, GameServerAutoShutdownDelay ShutdownDelay) : ICommand
+public record ChangeShutdownDelayCommand(ServerName ServerName, GameServerAutoShutdownDelay ShutdownDelay) : ICommand;

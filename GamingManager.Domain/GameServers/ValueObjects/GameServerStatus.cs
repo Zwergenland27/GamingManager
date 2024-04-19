@@ -4,5 +4,6 @@ public enum GameServerStatus
 {
     Offline,
     Starting,
+    WaitingForHardware,
     Online
 }

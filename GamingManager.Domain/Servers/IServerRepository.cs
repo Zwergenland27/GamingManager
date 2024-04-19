@@ -13,6 +13,8 @@ public interface IServerRepository
 	Task<Server?> GetAsync(ServerId id);
 	Task<Server?> GetAsync(Hostname hostname);
 
+	Task<bool> HasAnyActiveGameServersAsync(ServerId serverId);
+
 	Task<bool> IsHostnameUniqueAsync(Hostname hostname);
 
 	Task<bool> IsMacUniqueAsync(Mac mac);

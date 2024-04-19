@@ -3,7 +3,7 @@ using GamingManager.Application.Abstractions;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.GameServers;
 
-namespace GamingManager.Application.Features.GameServers.Commands.CancelShutdown;
+namespace GamingManager.Application.Features.GameServers.Events.CancelShutdown;
 
 public class CancelShutdownCommandHandler(
 	IUnitOfWork unitOfWork,

@@ -4,7 +4,7 @@ using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.GameServers;
 using GamingManager.Domain.Projects;
 
-namespace GamingManager.Application.Features.GameServers.Commands.Delete;
+namespace GamingManager.Application.Features.GameServers.Events.Delete;
 
 public class DeleteGameServerCommandHandler(
 	IUnitOfWork unitOfWork,

@@ -3,7 +3,7 @@ using GamingManager.Application.Abstractions;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.GameServers;
 
-namespace GamingManager.Application.Features.GameServers.Commands.Crashed;
+namespace GamingManager.Application.Features.GameServers.Events.Crashed;
 
 public class GameServerCrashedCommandHandler(
 	IUnitOfWork unitOfWork,

@@ -6,6 +6,7 @@ using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Projects;
 using GamingManager.Domain.Projects.ValueObjects;
 using GamingManager.Domain.Servers.ValueObjects;
+using static GamingManager.Domain.DomainErrors.Errors;
 
 namespace GamingManager.Domain.GameServers;
 
@@ -51,14 +52,32 @@ public class GameServer : AggregateRoot<GameServerId>
 		return gameServer;
 	}
 
-	public CanFail Start()
+	public CanFail MarkForStart()
 	{
+		if (HostedOn is null) return Errors.GameServers.ServerNotHosted;
+
 		if (Maintenance) return Errors.GameServers.NotStartable;
 		if (Status == GameServerStatus.Online) return Errors.GameServers.AlreadyOnline;
 		if (Status == GameServerStatus.Starting) return Errors.GameServers.AlreadyStarting;
 
+		Status = GameServerStatus.WaitingForHardware;
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn, Status));
+		return CanFail.Success();
+	}
+
+	public CanFail Start()
+	{
+		if (HostedOn is null) return Errors.GameServers.ServerNotHosted;
+
+		if (Maintenance) return Errors.GameServers.NotStartable;
+		if (Status == GameServerStatus.Online) return Errors.GameServers.AlreadyOnline;
+		if (Status == GameServerStatus.Starting) return Errors.GameServers.AlreadyStarting;
 		Status = GameServerStatus.Starting;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, Status));
+
+		var shutdownAtUtc = new GameServerShutdownAtUtc(DateTime.UtcNow.AddMinutes(ShutdownDelay.Minutes));
+		ScheduleShutdown(shutdownAtUtc);
+
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn, Status));
 		return CanFail.Success();
 	}
 
@@ -93,15 +112,13 @@ public class GameServer : AggregateRoot<GameServerId>
 	{
 		Status = GameServerStatus.Offline;
 		ShutdownAt = null;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn!, Status));
 	}
 
-	public CanFail Started(StartedAtUtc startedAt)
+	public void Started()
 	{
-		if (startedAt.Value >= DateTime.UtcNow) return Errors.GameServers.StartedInFuture;
 		Status = GameServerStatus.Online;
-
-		return CanFail.Success();
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn!, Status));
 	}
 
 	public CanFail Crashed(CrashedAtUtc crashedAt)
@@ -110,23 +127,25 @@ public class GameServer : AggregateRoot<GameServerId>
 
 		Status = GameServerStatus.Offline;
 		ShutdownAt = null;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn!, Status));
 		RaiseDomainEvent(new GameServerCrashedEvent(Id, crashedAt));
 		return CanFail.Success();
 	}
 
 	public CanFail BeginMaintenance()
 	{
+		throw new NotImplementedException("Not working yet.");
 		Maintenance = true;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn, Status));
 		return CanFail.Success();
 	}
 
 	public CanFail FinishMaintenance()
 	{
+		throw new NotImplementedException("Not working yet.");
 		if (!Maintenance) return Errors.GameServers.NoMaintenance;
 		Maintenance = false;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn, Status));
 		return CanFail.Success();
 	}
 }

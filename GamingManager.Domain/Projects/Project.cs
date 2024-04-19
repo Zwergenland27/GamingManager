@@ -64,23 +64,23 @@ public class Project : AggregateRoot<ProjectId>
 		return project;
 	}
 
-	public CanFail Join(ParticipantId participantId, SessionStartsAtUtc joinTime)
+	public CanFail Join(Account account, SessionStartsAtUtc joinTime)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
+		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		if (Ended) return Errors.Projects.Ended;
 
 		if (participant.IsCurrentlyBanned) return Errors.Projects.Participants.Banned;
-		return participant.Join(joinTime);
+		return participant.Join(Server!, joinTime);
 	}
 
-	public CanFail Leave(ParticipantId participantId, SessionEndsAtUtc leaveTime, bool irregular = false)
+	public CanFail Leave(Account account, SessionEndsAtUtc leaveTime, bool irregular = false)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
+		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
-		var leaveResult = participant.Leave(leaveTime, irregular);
+		var leaveResult = participant.Leave(Server!, leaveTime, irregular);
 		if (leaveResult.HasFailed) return leaveResult.Errors;
 
 		if(!_participants.Any(participant => participant.Online))

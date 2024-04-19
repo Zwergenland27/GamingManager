@@ -14,18 +14,12 @@
   <ItemGroup>
     <Folder Include="Features\GameServers\Commands\BeginMaintenance\" />
     <Folder Include="Features\GameServers\Commands\FinishMaintenance\" />
-    <Folder Include="Features\GameServers\Commands\Started\" />
-    <Folder Include="Features\GameServers\Commands\ShuttedDown\" />
-    <Folder Include="Features\GameServers\Commands\ScheduleShutdown\" />
-    <Folder Include="Features\GameServers\Commands\Start\" />
+    <Folder Include="Features\GameServers\Events\Started\" />
+    <Folder Include="Features\GameServers\Events\ShuttedDown\" />
     <Folder Include="Features\GameServers\Queries\" />
-    <Folder Include="Features\Projects\Commands\Join\" />
-    <Folder Include="Features\Projects\Commands\Leave\" />
     <Folder Include="Features\Projects\Queries\" />
-    <Folder Include="Features\Servers\Commands\CancelShutdown\" />
     <Folder Include="Features\Servers\Commands\BeginMaintenance\" />
     <Folder Include="Features\Servers\Commands\FinishMaintenance\" />
-    <Folder Include="Features\Servers\Commands\Start\" />
     <Folder Include="Features\Servers\Queries\" />
     <Folder Include="Features\Users\Queries\GetAll\" />
     <Folder Include="Features\Users\Queries\Get\" />

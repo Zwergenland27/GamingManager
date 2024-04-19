@@ -1,4 +1,5 @@
 ﻿using GamingManager.Domain.GameServers.ValueObjects;
+using GamingManager.Domain.Servers.ValueObjects;
 
 namespace GamingManager.Domain.GameServers;
 
@@ -13,4 +14,6 @@ public interface IGameServerRepository
 	Task<bool> IsServerNameUniqeAsync(ServerName serverName);
 
 	Task<GameServer?> GetAsync(ServerName serverName);
+
+	IAsyncEnumerable<GameServer> GetAllStartablesAsync(ServerId serverId);
 }
