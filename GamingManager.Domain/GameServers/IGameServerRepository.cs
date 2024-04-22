@@ -11,9 +11,11 @@ public interface IGameServerRepository
 
 	Task<GameServer?> GetAsync(GameServerId id);
 
-	Task<bool> IsServerNameUniqeAsync(ServerName serverName);
+	Task<bool> IsServerNameUniqeAsync(GameServerName serverName);
 
-	Task<GameServer?> GetAsync(ServerName serverName);
+	Task<GameServer?> GetAsync(GameServerName serverName);
 
 	IAsyncEnumerable<GameServer> GetAllStartablesAsync(ServerId serverId);
+
+	IAsyncEnumerable<GameServer> GetAllOnlineAsync(ServerId serverId);
 }

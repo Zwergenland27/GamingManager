@@ -31,6 +31,6 @@ public class CreateProjectCommandHandler(
 
 		await unitOfWork.SaveAsync(cancellationToken);
 
-		return (await projectDtoRepository.GetAsync(request.projectName))!;
+		return (await projectDtoRepository.GetDetailedAsync(request.projectName))!;
 	}
 }

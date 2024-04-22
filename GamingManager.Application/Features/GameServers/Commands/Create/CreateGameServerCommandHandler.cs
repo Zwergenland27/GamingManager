@@ -1,6 +1,6 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Application.Abstractions;
-using GamingManager.Application.Features.GameServers.DTOs;
+using GamingManager.Contracts.Features.GameServers.DTOs;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.GameServers;
 using GamingManager.Domain.Projects;
@@ -11,9 +11,9 @@ public class CreateGameServerCommandHandler(
 	IUnitOfWork unitOfWork,
 	IProjectRepository projectRepository,
 	IGameServerRepository gameServerRepository,
-	IGameServerDtoRepository gameServerDtoRepository) : ICommandHandler<CreateGameServerCommand, DetailedGameServerDto>
+	IGameServerDtoRepository gameServerDtoRepository) : ICommandHandler<CreateGameServerCommand, ShortenedGameServerDto>
 {
-	public async Task<CanFail<DetailedGameServerDto>> Handle(CreateGameServerCommand request, CancellationToken cancellationToken)
+	public async Task<CanFail<ShortenedGameServerDto>> Handle(CreateGameServerCommand request, CancellationToken cancellationToken)
 	{
 		var nameUnique = await gameServerRepository.IsServerNameUniqeAsync(request.ServerName);
 		if (!nameUnique) return Errors.GameServers.DuplicateServerName;

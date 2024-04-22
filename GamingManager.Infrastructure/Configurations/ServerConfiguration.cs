@@ -23,11 +23,10 @@ public class ServerConfiguration : IEntityTypeConfiguration<Server>
 				id => id.Value,
 				value => new ServerId(value));
 
-		//TODO:
-		builder.Property(server => server.Address)
-			.HasConversion(
-				address => alias.Value,
-				value => Address.Create(value).Value);
+		builder.OwnsOne(server => server.Address, addressBuilder =>
+		{
+			addressBuilder.ToJson();
+		});
 
 		builder.Property(server => server.Mac)
 			.HasConversion(

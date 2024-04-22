@@ -41,7 +41,7 @@ private static void ConfigureGameServersTable(EntityTypeBuilder<GameServer> buil
 		builder.Property(GameServer => GameServer.ServerName)
 			.HasConversion(
 				servername => servername.Value,
-				value => new ServerName(value));
+				value => new GameServerName(value));
 
 		builder.Property(gameServer => gameServer.Status);
 

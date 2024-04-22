@@ -12,17 +12,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Features\Accounts\DTOs\" />
     <Folder Include="Features\GameServers\Commands\BeginMaintenance\" />
     <Folder Include="Features\GameServers\Commands\FinishMaintenance\" />
-    <Folder Include="Features\GameServers\Events\Started\" />
-    <Folder Include="Features\GameServers\Events\ShuttedDown\" />
-    <Folder Include="Features\GameServers\Queries\" />
-    <Folder Include="Features\Projects\Queries\" />
+    <Folder Include="Features\GameServers\DTOs\" />
+    <Folder Include="Features\Games\DTOs\" />
+    <Folder Include="Features\Projects\DTOs\" />
     <Folder Include="Features\Servers\Commands\BeginMaintenance\" />
     <Folder Include="Features\Servers\Commands\FinishMaintenance\" />
-    <Folder Include="Features\Servers\Queries\" />
-    <Folder Include="Features\Users\Queries\GetAll\" />
-    <Folder Include="Features\Users\Queries\Get\" />
+    <Folder Include="Features\Servers\DTOs\" />
+    <Folder Include="Features\Users\DTOs\" />
   </ItemGroup>
 
   <ItemGroup>

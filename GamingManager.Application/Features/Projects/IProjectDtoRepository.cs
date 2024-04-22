@@ -5,5 +5,7 @@ namespace GamingManager.Application.Features.Projects;
 
 public interface IProjectDtoRepository
 {
-	Task<DetailedProjectDto?> GetAsync(ProjectName projectName);
+	Task<DetailedProjectDto?> GetDetailedAsync(ProjectId projectId);
+
+	IAsyncEnumerable<ShortenedProjectDto> GetAllAsync();
 }

@@ -1,4 +1,4 @@
-﻿using GamingManager.Application.Features.Accounts.DTOs;
+﻿using GamingManager.Contracts.Features.Accounts.DTOs;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.Games.ValueObjects;
 

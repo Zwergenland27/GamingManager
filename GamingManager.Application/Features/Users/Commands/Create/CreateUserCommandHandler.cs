@@ -1,6 +1,6 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Application.Abstractions;
-using GamingManager.Application.Features.Users.DTOs;
+using GamingManager.Contracts.Features.Users.DTOs;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.Users;
 

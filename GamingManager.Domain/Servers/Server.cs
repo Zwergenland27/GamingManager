@@ -1,6 +1,7 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Domain.Abstractions;
 using GamingManager.Domain.DomainErrors;
+using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Servers.Events;
 using GamingManager.Domain.Servers.ValueObjects;
 
@@ -81,9 +82,27 @@ public class Server : AggregateRoot<ServerId>
 		RaiseDomainEvent(new ServerStatusChangedEvent(Id, Status));
 	}
 
+	public CanFail Crashed()
+	{
+		if (Status == ServerStatus.Offline) return Errors.GameServers.CannotCrash;
+
+		Status = ServerStatus.Offline;
+		ShutdownAt = null;
+		RaiseDomainEvent(new ServerStatusChangedEvent(Id, Status));
+
+		ServerCrashedAtUtc crashedAt = new ServerCrashedAtUtc(DateTime.UtcNow);
+		if (LastHeartbeatAt is not null)
+		{
+			crashedAt = new ServerCrashedAtUtc(LastHeartbeatAt.Value);
+		}
+
+		RaiseDomainEvent(new ServerCrashedEvent(Id, crashedAt));
+		return CanFail.Success();
+	}
+
 	public CanFail ScheduleShutdown(ServerShutdownAtUtc shutdownAtUtc)
 	{
-        if (shutdownAtUtc.Value < DateTime.UtcNow) return Errors.Servers.ShutdownInPast;
+		if (shutdownAtUtc.Value < DateTime.UtcNow) return Errors.Servers.ShutdownInPast;
 
 		ShutdownAt = shutdownAtUtc;
 		RaiseDomainEvent(new ServerShutdownScheduledEvent(Id));

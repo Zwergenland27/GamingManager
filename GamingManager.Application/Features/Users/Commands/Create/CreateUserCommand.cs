@@ -1,9 +1,9 @@
 ﻿using CleanDomainValidation.Application;
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
-using GamingManager.Application.Features.Users.DTOs;
 using GamingManager.Contracts.ContractErrors;
 using GamingManager.Contracts.Features.Users.Commands;
+using GamingManager.Contracts.Features.Users.DTOs;
 using GamingManager.Domain.Users.ValueObjects;
 
 namespace GamingManager.Application.Features.Users.Commands.Create;

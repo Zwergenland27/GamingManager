@@ -3,4 +3,4 @@ using GamingManager.Domain.GameServers.ValueObjects;
 
 namespace GamingManager.Application.Features.GameServers.Events.ChangeShutdownDelay;
 
-public record ChangeShutdownDelayCommand(ServerName ServerName, GameServerAutoShutdownDelay ShutdownDelay) : ICommand;
+public record ChangeShutdownDelayCommand(GameServerName GameServerName, GameServerAutoShutdownDelay ShutdownDelay) : ICommand;

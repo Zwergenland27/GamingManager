@@ -3,4 +3,4 @@ using GamingManager.Domain.GameServers.ValueObjects;
 
 namespace GamingManager.Application.Features.GameServers.Commands.Start;
 
-public record StartGameServerCommand(ServerName ServerName) : ICommand;
+public record StartGameServerCommand(GameServerName GameServerName) : ICommand;

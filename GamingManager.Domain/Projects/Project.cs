@@ -10,6 +10,7 @@ using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Projects.ValueObjects;
 using GamingManager.Domain.Projects.Events;
 using GamingManager.Domain.Projects.Entities;
+using System.Reflection.Metadata.Ecma335;
 
 namespace GamingManager.Domain.Projects;
 
@@ -75,12 +76,12 @@ public class Project : AggregateRoot<ProjectId>
 		return participant.Join(Server!, joinTime);
 	}
 
-	public CanFail Leave(Account account, SessionEndsAtUtc leaveTime, bool irregular = false)
+	public CanFail Leave(Account account, SessionEndsAtUtc leaveTime)
 	{
 		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
-		var leaveResult = participant.Leave(Server!, leaveTime, irregular);
+		var leaveResult = participant.Leave(Server!, leaveTime, false);
 		if (leaveResult.HasFailed) return leaveResult.Errors;
 
 		if(!_participants.Any(participant => participant.Online))
@@ -89,6 +90,21 @@ public class Project : AggregateRoot<ProjectId>
 		}
 
 		return CanFail.Success();
+	}
+
+	public CanFail Crashed(GameServerCrashedAtUtc crashedAtUtc)
+	{
+		var onlineParticipants = _participants.Where(participant => participant.Online);
+
+		CanFail result = new();
+		
+		foreach (var participant in onlineParticipants)
+		{
+			var leaveResult = participant.Leave(Server!, new SessionEndsAtUtc(crashedAtUtc.Value), true);
+			result.InheritFailure(result);
+		}
+
+		return result;
 	}
 
 	public CanFail<Ban> BanPermanent(Account account, Reason reason)

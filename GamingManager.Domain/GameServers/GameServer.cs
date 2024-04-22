@@ -14,7 +14,7 @@ public class GameServer : AggregateRoot<GameServerId>
 {
 	private GameServer(
 		ProjectId projectId,
-		ServerName servername,
+		GameServerName servername,
 		GameServerAutoShutdownDelay shutdownDelay) : base(GameServerId.CreateNew())
 	{
 		Project = projectId;
@@ -33,7 +33,7 @@ public class GameServer : AggregateRoot<GameServerId>
 
 	public ProjectId Project { get; private init; }
 
-	public ServerName ServerName { get; private init; }
+	public GameServerName ServerName { get; private init; }
 
 	public GameServerStatus Status { get; private set; }
 
@@ -45,7 +45,7 @@ public class GameServer : AggregateRoot<GameServerId>
 
 	public bool Unstartable { get; private set; }
 
-	public static CanFail<GameServer> Create(Project project, ServerName serverName, GameServerAutoShutdownDelay shutDownDelay)
+	public static CanFail<GameServer> Create(Project project, GameServerName serverName, GameServerAutoShutdownDelay shutDownDelay)
 	{
 		var gameServer = new GameServer(project.Id, serverName, shutDownDelay);
 		gameServer.RaiseDomainEvent(new GameServerCreatedEvent(gameServer.Id));
@@ -121,14 +121,14 @@ public class GameServer : AggregateRoot<GameServerId>
 		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn!, Status));
 	}
 
-	public CanFail Crashed(CrashedAtUtc crashedAt)
+	public CanFail Crashed(GameServerCrashedAtUtc crashedAt)
 	{
 		if (Status == GameServerStatus.Offline) return Errors.GameServers.CannotCrash;
 
 		Status = GameServerStatus.Offline;
 		ShutdownAt = null;
 		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn!, Status));
-		RaiseDomainEvent(new GameServerCrashedEvent(Id, crashedAt));
+		RaiseDomainEvent(new GameServerCrashedEvent(Id, Project, crashedAt));
 		return CanFail.Success();
 	}
 
