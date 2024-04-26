@@ -18,4 +18,6 @@ public interface IGameServerRepository
 	IAsyncEnumerable<GameServer> GetAllStartablesAsync(ServerId serverId);
 
 	IAsyncEnumerable<GameServer> GetAllOnlineAsync(ServerId serverId);
+
+	IAsyncEnumerable<GameServer> GetAllOfServerAsync(ServerId serverId);
 }

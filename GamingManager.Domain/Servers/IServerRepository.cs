@@ -19,7 +19,7 @@ public interface IServerRepository
 
 	Task<bool> IsMacUniqueAsync(Mac mac);
 
-	Task<bool> IsAddressUniqueAsync(Address address);
+	Task<bool> IsAddressUniqueAsync(Uri address);
 
 	Task<bool> HostsGameServer(ServerId serverId);
 }

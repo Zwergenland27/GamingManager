@@ -12,7 +12,7 @@ public class GameServerShuttedDownCommandHandler(
 
 	public async Task<CanFail> Handle(GameServerShuttedDownCommand request, CancellationToken cancellationToken)
 	{
-		var gameServer = await gameServerRepository.GetAsync(request.GameServerId);
+		var gameServer = await gameServerRepository.GetAsync(request.GameServerName);
 		if (gameServer is null) return Errors.GameServers.ServerNameNotFound;
 
 		gameServer.ShuttedDown();

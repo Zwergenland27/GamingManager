@@ -33,6 +33,7 @@ public class Project : AggregateRoot<ProjectId>
 		Name = name;
 		Start = start;
 		Ended = false;
+		Public = false;
 	}
 #pragma warning disable CS8618
 	private Project() : base(default!) { }

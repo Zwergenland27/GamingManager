@@ -20,17 +20,17 @@ public class CreateProjectCommandHandler(
 		var game = await gameRepository.GetAsync(request.GameName);
 		if(game is null) return Errors.Games.NameNotFound;
 
-		var user = await userRepository.GetAsync(request.UserId);
+		var user = await userRepository.GetAsync(request.Username);
 		if(user is null) return Errors.Users.IdNotFound;
 
 
-		var projectResult = Project.Create(request.projectName, game, request.ProjectStartsAtUtc, user);
+		var projectResult = Project.Create(request.ProjectName, game, request.StartsAtUtc, user);
 		if (projectResult.HasFailed) return projectResult.Errors;
 
 		projectRepository.Add(projectResult.Value);
 
 		await unitOfWork.SaveAsync(cancellationToken);
 
-		return (await projectDtoRepository.GetDetailedAsync(request.projectName))!;
+		return (await projectDtoRepository.GetDetailedAsync(projectResult.Value.Id))!;
 	}
 }

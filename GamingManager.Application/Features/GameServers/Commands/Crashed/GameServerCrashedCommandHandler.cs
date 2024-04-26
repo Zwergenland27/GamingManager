@@ -11,7 +11,7 @@ public class GameServerCrashedCommandHandler(
 {
 	public async Task<CanFail> Handle(GameServerCrashedCommand request, CancellationToken cancellationToken)
 	{
-		var gameServer = await gameServerRepository.GetAsync(request.GameServerId);
+		var gameServer = await gameServerRepository.GetAsync(request.Name);
 		if (gameServer is null) return Errors.GameServers.ServerNameNotFound;
 
 		gameServer.Crashed(request.CrashedAtUtc);

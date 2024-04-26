@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GamingManager.Application.Features.Projects.DTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace GamingManager.Contracts.Features.GameServers.DTOs;
 
@@ -20,4 +21,10 @@ public record ShortenedGameServerDto(
 	/// <example>Minecraft-04</example>
 	[Required]
 	public string Name { get; init; } = Name;
+
+	/// <summary>
+	/// The project that the gameserver belongs to
+	/// </summary>
+	[Required]
+	public ShortenedProjectDto Project { get; init; } = Project;
 }

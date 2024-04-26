@@ -8,7 +8,9 @@ public record DetailedProjectDto(
 	string Id,
 	string Name,
 	ShortenedGameDto Game,
-	ShortenedGameServerDto GameServer,
+	ShortenedGameServerForProjectDto? GameServer,
+	DateTime StartsAtUtc,
+	DateTime? EndsAtUtc,
 	IEnumerable<DetailedMemberDto> Members,
 	IEnumerable<DetailedParticipantDto> Participants)
 {
@@ -27,6 +29,17 @@ public record DetailedProjectDto(
 	public string Name { get; init; } = Name;
 
 	/// <summary>
+	/// The start time of the project
+	/// </summary>
+	[Required]
+	public DateTime StartsAtUtc { get; init; } = StartsAtUtc;
+
+	/// <summary>
+	/// The end time of the project
+	/// </summary>
+	public DateTime? EndsAtUtc { get; init; } = EndsAtUtc;
+
+	/// <summary>
 	/// The game that the project belongs to
 	/// </summary>
 	[Required]
@@ -35,8 +48,7 @@ public record DetailedProjectDto(
 	/// <summary>
 	/// The game server on which the project runs
 	/// </summary>
-	[Required]
-	public ShortenedGameServerDto GameServer { get; init; } = GameServer;
+	public ShortenedGameServerForProjectDto? GameServer { get; init; } = GameServer;
 
 	/// <summary>
 	/// Team members of the project

@@ -1,6 +1,5 @@
 ﻿using CleanDomainValidation.Application;
 using GamingManager.Application.Features.Users.Commands.Create;
-using GamingManager.Application.Features.Users.DTOs;
 using GamingManager.Contracts.Features.Users.Commands;
 using GamingManager.Contracts.Features.Users.DTOs;
 using MediatR;
@@ -19,10 +18,10 @@ public class UserController(IMediator mediator) : ApiController
 	/// <response code="400">The request is invalid</response>
 	/// <response code="409">The username or the email is already used by another user</response>
 	[HttpPost]
-	[ProducesResponseType(typeof(DetailedUser), 201)]
+	[ProducesResponseType(typeof(DetailedUserDto), 201)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status409Conflict)]
-	public async Task<ActionResult<DetailedUser>> Create(CreateUserParameters parameters)
+	public async Task<ActionResult<DetailedUserDto>> Create(CreateUserParameters parameters)
 	{
 		var commandResult = Builder<CreateUserCommand>
 			.BindParameters(parameters)
@@ -30,8 +29,8 @@ public class UserController(IMediator mediator) : ApiController
 		if (commandResult.HasFailed) return Problem(commandResult);
 
 		var result = await mediator.Send(commandResult.Value);
-		if(result.HasFailed) return Problem(result);
+		if (result.HasFailed) return Problem(result);
 
-		return Ok(result.Value.Convert());
+		return Ok(result.Value);
 	}
 }

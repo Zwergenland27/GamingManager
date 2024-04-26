@@ -14,7 +14,7 @@ public class Server : AggregateRoot<ServerId>
 {
 	private Server(
 		Hostname hostname,
-		Address address,
+		Uri address,
 		Mac mac,
 		ServerAutoShutdownDelay shutdownDelay) : base(ServerId.CreateNew())
 	{
@@ -33,7 +33,7 @@ public class Server : AggregateRoot<ServerId>
 
 	public Hostname Hostname { get; private set; }
 
-	public Address Address { get; set; }
+	public Uri Address { get; set; }
 
 	public Mac Mac { get; private init; }
 
@@ -49,7 +49,7 @@ public class Server : AggregateRoot<ServerId>
 
 	public bool PossiblyUnstartable { get; private set; }
 
-	public static CanFail<Server> Create(Hostname hostname, Address address, Mac mac, ServerAutoShutdownDelay shutdownDelay)
+	public static CanFail<Server> Create(Hostname hostname, Uri address, Mac mac, ServerAutoShutdownDelay shutdownDelay)
 	{
 		return new Server(hostname, address, mac, shutdownDelay);
 	}
@@ -59,9 +59,10 @@ public class Server : AggregateRoot<ServerId>
 		Hostname = hostname;
 	}
 
-	public void ChangeAddress(Address address)
+	public void ChangeAddress(Uri address)
 	{
 		Address = address;
+		RaiseDomainEvent(new ServerAddressChangedEvent(Id, address));
 	}
 
 	public CanFail Start()

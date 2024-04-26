@@ -1,6 +1,6 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Application.Abstractions;
-using GamingManager.Application.Features.Servers.DTOs;
+using GamingManager.Contracts.Features.Servers.DTOs;
 
 namespace GamingManager.Application.Features.Servers.Queries.GetAll;
 

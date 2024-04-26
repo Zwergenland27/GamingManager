@@ -1,4 +1,6 @@
-﻿using GamingManager.Contracts.Features.Accounts.DTOs;
+﻿using GamingManager.Application.Features.Projects.DTOs;
+using GamingManager.Contracts.Features.Accounts.DTOs;
+using GamingManager.Contracts.Features.Projects.DTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace GamingManager.Contracts.Features.Games.DTOs;
@@ -7,7 +9,7 @@ public record DetailedGameDto(
 	string Id,
 	string Name,
 	IReadOnlyCollection<ShortenedAccountDto> Accounts,
-	IReadOnlyCollection<ShortenedProjectDto> Projects)
+	IReadOnlyCollection<ShortenedProjectForGameDto> Projects)
 {
 	///<summary>
 	/// Unique id of the game
@@ -33,5 +35,5 @@ public record DetailedGameDto(
 	/// Projects of the game
 	/// </summary>
 	[Required]
-	public IReadOnlyCollection<ShortenedProjectDto> Projects { get; init; } = Projects;
+	public IReadOnlyCollection<ShortenedProjectForGameDto> Projects { get; init; } = Projects;
 }

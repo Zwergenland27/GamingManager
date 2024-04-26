@@ -14,7 +14,7 @@ public class SetPlannedProjectEndCommandHandler(
 		var project = await projectRepository.GetAsync(request.ProjectId);
 		if (project is null) return Errors.Projects.IdNotFound;
 
-		var result = project.SetPlannedEnd(request.PlannedEntUtc);
+		var result = project.SetPlannedEnd(request.PlannedEndUtc);
 		if (result.HasFailed) return result.Errors;
 
 		await unitOfWork.SaveAsync(cancellationToken);

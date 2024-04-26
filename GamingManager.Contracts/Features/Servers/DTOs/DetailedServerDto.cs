@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GamingManager.Contracts.Features.GameServers.DTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace GamingManager.Contracts.Features.Servers.DTOs;
 
@@ -6,7 +7,8 @@ public record DetailedServerDto(
 	string Id,
 	string Hostname,
 	string Mac,
-	string Ip)
+	string Ip,
+	IEnumerable<ShortenedGameServerDto> GameServers)
 {
 	///<summary>
 	/// Unique id of the server
@@ -35,4 +37,10 @@ public record DetailedServerDto(
 	/// <example>192.168.1.1</example>
 	[Required]
 	public string Ip { get; init; } = Ip;
+
+	/// <summary>
+	/// List of game servers running on this server
+	/// </summary>
+	[Required]
+	public IEnumerable<ShortenedGameServerDto> GameServers { get; init; } = GameServers;
 }

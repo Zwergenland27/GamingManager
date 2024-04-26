@@ -1,4 +1,5 @@
-﻿using GamingManager.Contracts.Features.Users.DTOs;
+﻿using GamingManager.Contracts.Features.Projects.DTOs;
+using GamingManager.Contracts.Features.Users.DTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace GamingManager.Application.Features.Projects.DTOs;

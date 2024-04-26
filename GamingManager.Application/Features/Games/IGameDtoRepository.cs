@@ -7,6 +7,6 @@ public interface IGameDtoRepository
 {
 	IAsyncEnumerable<ShortenedGameDto> GetAllAsync();
 
-	Task<DetailedGameDto> GetDetailedAsync(GameName gameName);
-	Task<GameId> GetIdAsync(GameName gameName);
+	Task<DetailedGameDto?> GetDetailedAsync(GameName gameName);
+	Task<GameId?> GetIdAsync(GameName gameName);
 }

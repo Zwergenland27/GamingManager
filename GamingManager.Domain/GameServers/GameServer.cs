@@ -5,6 +5,7 @@ using GamingManager.Domain.GameServers.Events;
 using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Projects;
 using GamingManager.Domain.Projects.ValueObjects;
+using GamingManager.Domain.Servers;
 using GamingManager.Domain.Servers.ValueObjects;
 using static GamingManager.Domain.DomainErrors.Errors;
 
@@ -41,6 +42,8 @@ public class GameServer : AggregateRoot<GameServerId>
 
 	public GameServerShutdownAtUtc? ShutdownAt { get; private set; }
 
+	public string? Address { get; private set; }
+
 	public bool Maintenance { get; private set; }
 
 	public bool Unstartable { get; private set; }
@@ -50,6 +53,17 @@ public class GameServer : AggregateRoot<GameServerId>
 		var gameServer = new GameServer(project.Id, serverName, shutDownDelay);
 		gameServer.RaiseDomainEvent(new GameServerCreatedEvent(gameServer.Id));
 		return gameServer;
+	}
+
+	public void Use(Server server)
+	{
+		HostedOn = server.Id;
+		Address = server.Address.Host;
+	}
+
+	public void HostAddressChanged(Uri newAddress)
+	{
+		Address = newAddress.Host;
 	}
 
 	public CanFail MarkForStart()

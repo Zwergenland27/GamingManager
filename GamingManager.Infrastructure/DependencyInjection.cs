@@ -1,4 +1,10 @@
 ﻿using GamingManager.Application.Abstractions;
+using GamingManager.Application.Features.Accounts;
+using GamingManager.Application.Features.Games;
+using GamingManager.Application.Features.GameServers;
+using GamingManager.Application.Features.Projects;
+using GamingManager.Application.Features.Servers;
+using GamingManager.Application.Features.Users;
 using GamingManager.Domain.Accounts;
 using GamingManager.Domain.Games;
 using GamingManager.Domain.GameServers;
@@ -48,10 +54,16 @@ public static class DependencyInjection
 		services
 			.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork))
 			.AddTransient<IAccountRepository, AccountRepository>()
+			.AddTransient<IAccountDtoRepository, AccountDtoRepository>()
 			.AddTransient<IGameRepository, GameRepository>()
+			.AddTransient<IGameDtoRepository, GameDtoRepository>()
 			.AddTransient<IGameServerRepository, GameServerRepository>()
+			.AddTransient<IGameServerDtoRepository, GameServerDtoRepository>()
 			.AddTransient<IProjectRepository, ProjectRepository>()
+			.AddTransient<IProjectDtoRepository, ProjectDtoRepository>()
 			.AddTransient<IServerRepository, ServerRepository>()
-			.AddTransient<IUserRepository, UserRepository>();
+			.AddTransient<IServerDtoRepository, ServerDtoRepository>()
+			.AddTransient<IUserRepository, UserRepository>()
+			.AddTransient<IUserDtoRepository, UserDtoRepository>();
 	}
 }

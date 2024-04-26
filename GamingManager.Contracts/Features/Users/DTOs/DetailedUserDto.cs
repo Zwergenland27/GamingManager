@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GamingManager.Application.Features.Projects.DTOs;
+using GamingManager.Contracts.Features.Accounts.DTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace GamingManager.Contracts.Features.Users.DTOs;
 
@@ -8,7 +10,9 @@ public record DetailedUserDto(
 	string? Lastname,
 	string Email,
 	string Username,
-	string Role)
+	string Role,
+	IEnumerable<ShortenedAccountDto> Accounts,
+	IEnumerable<ShortenedProjectDto> MemberOf)
 {
 	/// <summary>
 	/// Unique id of the user
@@ -49,4 +53,16 @@ public record DetailedUserDto(
 	/// <example>Guest</example>
 	[Required]
 	public string Role { get; init; } = Role;
+
+	/// <summary>
+	/// List of accounts the user owns
+	/// </summary>
+	[Required]
+	public IEnumerable<ShortenedAccountDto> Accounts { get; init; } = Accounts;
+
+	/// <summary>
+	/// List of projects the user is in the team
+	/// </summary>
+	[Required]
+	public IEnumerable<ShortenedProjectDto> MemberOf { get; init; } = MemberOf;
 }

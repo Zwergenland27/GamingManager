@@ -18,10 +18,10 @@ public class GameController(IMediator mediator) : ApiController
 	/// <response code="400">The request is invalid</response>
 	/// <response code="409">The game name is already used</response>
 	[HttpPost]
-	[ProducesResponseType(typeof(DetailedGame), 201)]
+	[ProducesResponseType(typeof(DetailedGameDto), 201)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status409Conflict)]
-	public async Task<ActionResult<DetailedGame>> Create(CreateGameParameters parameters)
+	public async Task<ActionResult<DetailedGameDto>> Create(CreateGameParameters parameters)
 	{
 		var commandResult = Builder<CreateGameCommand>
 			.BindParameters(parameters)
@@ -31,6 +31,6 @@ public class GameController(IMediator mediator) : ApiController
 		var result = await mediator.Send(commandResult.Value);
 		if (result.HasFailed) return Problem(result);
 
-		return Ok(result.Value.Convert());
+		return Ok(result.Value);
 	}
 }

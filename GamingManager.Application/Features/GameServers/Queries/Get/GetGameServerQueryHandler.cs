@@ -10,7 +10,7 @@ public class GetGameServerQueryHandler(
 {
 	public async Task<CanFail<DetailedGameServerDto>> Handle(GetGameServerQuery request, CancellationToken cancellationToken)
 	{
-		var gameServer = await gameServerDtoRepository.GetDetailedAsync(request.ServerName);
+		var gameServer = await gameServerDtoRepository.GetDetailedAsync(request.GameServerName);
 		if (gameServer is null) return Errors.GameServers.ServerNameNotFound;
 
 		return gameServer;

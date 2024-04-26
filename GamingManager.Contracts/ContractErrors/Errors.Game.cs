@@ -10,7 +10,14 @@ public static partial class Errors
 		{
 			public static Error NameMissing => Error.Validation(
 				"Games.Create.NameMissing",
-				"The name field is missing");
+				"The name field is required.");
+		}
+
+		public static class Get
+		{
+			public static Error NameMissing => Error.Validation(
+				"Games.Get.NameMissing",
+				"The name field is required.");
 		}
 	}
 }

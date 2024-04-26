@@ -11,23 +11,23 @@ public class CreateGameServerCommandHandler(
 	IUnitOfWork unitOfWork,
 	IProjectRepository projectRepository,
 	IGameServerRepository gameServerRepository,
-	IGameServerDtoRepository gameServerDtoRepository) : ICommandHandler<CreateGameServerCommand, ShortenedGameServerDto>
+	IGameServerDtoRepository gameServerDtoRepository) : ICommandHandler<CreateGameServerCommand, DetailedGameServerDto>
 {
-	public async Task<CanFail<ShortenedGameServerDto>> Handle(CreateGameServerCommand request, CancellationToken cancellationToken)
+	public async Task<CanFail<DetailedGameServerDto>> Handle(CreateGameServerCommand request, CancellationToken cancellationToken)
 	{
-		var nameUnique = await gameServerRepository.IsServerNameUniqeAsync(request.ServerName);
+		var nameUnique = await gameServerRepository.IsServerNameUniqeAsync(request.GameServerName);
 		if (!nameUnique) return Errors.GameServers.DuplicateServerName;
 
 		var project = await projectRepository.GetAsync(request.ProjectName);
         if (project is null) return Errors.Projects.NameNotFound;
 
-        var gameServerResult = GameServer.Create(project, request.ServerName, request.SutdownDelay);
+        var gameServerResult = GameServer.Create(project, request.GameServerName, request.ShutdownDelay);
 		if(gameServerResult.HasFailed) return gameServerResult.Errors;
 
 		gameServerRepository.Add(gameServerResult.Value);
 
 		await unitOfWork.SaveAsync(cancellationToken);
 
-		return (await gameServerDtoRepository.GetDetailedAsync(request.ServerName))!;
+		return (await gameServerDtoRepository.GetDetailedAsync(request.GameServerName))!;
 	}
 }

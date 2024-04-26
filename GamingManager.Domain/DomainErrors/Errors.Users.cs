@@ -43,6 +43,13 @@ public static partial class Errors
 			"A user with this email already exists");
 
 		/// <summary>
+		/// No changes were made to the user data
+		/// </summary>
+		public static Error NoChanges => Error.Conflict(
+			"User.NoChanges",
+			"No changes were made to the user data");
+
+		/// <summary>
 		/// Errors that occur when working with <see cref="UserId"/>
 		/// </summary>
 		public static class Id
