@@ -28,4 +28,11 @@ public class CreateServerParameters : IParameters
 	/// <example>AF:FE:DE:AD:DE:AD</example>
 	[Required]
 	public string? Mac { get; set; }
+
+	/// <summary>
+	/// Shutdown delay after last player left in minutes
+	/// </summary>
+	/// <example>15</example>
+	[Required]
+	public uint? ShutdownDelay { get; set; }
 }

@@ -32,7 +32,6 @@ public class Project : AggregateRoot<ProjectId>
 		Game = gameId;
 		Name = name;
 		Start = start;
-		Ended = false;
 		Public = false;
 	}
 #pragma warning disable CS8618
@@ -49,7 +48,16 @@ public class Project : AggregateRoot<ProjectId>
 
 	public ProjectEndsAtUtc? End { get; private set; }
 
-	public bool Ended { get; private set; }
+	public bool Ended
+	{
+		get
+		{
+			if(End is null) return false;
+			return DateTime.UtcNow >= End.Value;
+		}
+	}
+
+	public bool Public { get; private set; }
 
 	public IReadOnlyCollection<Participant> Participants => _participants.AsReadOnly();
 
@@ -191,7 +199,6 @@ public class Project : AggregateRoot<ProjectId>
 
 	public void Finish()
 	{
-		Ended = true;
 		End = new ProjectEndsAtUtc(DateTime.UtcNow);
 		RaiseDomainEvent(new ProjectFinishedEvent(Id));
 	}

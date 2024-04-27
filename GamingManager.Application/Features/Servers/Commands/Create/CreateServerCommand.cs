@@ -24,13 +24,18 @@ public class CreateServerCommandBuilder : IRequestBuilder<CreateServerParameters
 			.Required(Errors.Server.CreateServer.MacMissing)
 			.Map(p => p.Mac, Mac.Create);
 
-		return builder.Build(() => new CreateServerCommand(hostname, address, mac));
+		var shutdownDelay = builder.ClassProperty(r => r.ShutdownDelay)
+			.Required(Errors.Server.CreateServer.ShutdownDelayMissing)
+			.Map(p => p.ShutdownDelay, value => new ServerAutoShutdownDelay(value));
+
+		return builder.Build(() => new CreateServerCommand(hostname, address, mac, shutdownDelay));
 	}
 }
 
 public record CreateServerCommand(
 	Hostname Hostname,
 	Uri Address,
-	Mac Mac) : ICommand<DetailedServerDto>
+	Mac Mac,
+	ServerAutoShutdownDelay ShutdownDelay) : ICommand<DetailedServerDto>
 {
 }

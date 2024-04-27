@@ -12,7 +12,7 @@ public class EditPersonalDataCommandBuilder : IRequestBuilder<EditPersonalDataPa
 	public ValidatedRequiredProperty<EditPersonalDataCommand> Configure(RequiredPropertyBuilder<EditPersonalDataParameters, EditPersonalDataCommand> builder)
 	{
 		var currentUsername = builder.ClassProperty(r => r.CurrentUsername)
-			.Required(Errors.Users.EditPersonalData.CurrentUsernameMissing)
+			.Required(Errors.User.EditPersonalData.CurrentUsernameMissing)
 			.Map(p => p.CurrentUsername, value => new Username(value));
 
 		var newUsername = builder.ClassProperty(r => r.NewUsername)

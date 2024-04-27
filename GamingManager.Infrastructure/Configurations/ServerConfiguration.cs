@@ -23,10 +23,15 @@ public class ServerConfiguration : IEntityTypeConfiguration<Server>
 				id => id.Value,
 				value => new ServerId(value));
 
-		builder.OwnsOne(server => server.Address, addressBuilder =>
-		{
-			addressBuilder.ToJson();
-		});
+		builder.Property(server => server.Hostname)
+			.HasConversion(
+				hostname => hostname.Value,
+				value => Hostname.Create(value).Value);
+
+		builder.Property(server => server.Address)
+			.HasConversion(
+				address => address.ToString(),
+				value => new Uri(value));
 
 		builder.Property(server => server.Mac)
 			.HasConversion(
@@ -34,6 +39,11 @@ public class ServerConfiguration : IEntityTypeConfiguration<Server>
 				value => Mac.Create(value).Value);
 
 		builder.Property(server => server.Status);
+
+		builder.Property(server => server.ShutdownDelay)
+			.HasConversion(
+				shutdownDelay => shutdownDelay.Minutes,
+				value => new ServerAutoShutdownDelay(value));
 
 		builder.Property(server => server.ShutdownAt)
 			.HasConversion(

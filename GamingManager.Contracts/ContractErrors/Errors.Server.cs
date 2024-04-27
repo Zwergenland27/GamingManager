@@ -48,6 +48,10 @@ public static partial class Errors
 			public static Error MacMissing => Error.Validation(
 				"Server.CreateServer.Mac.Missing",
 				"The mac field is required.");
+
+			public static Error ShutdownDelayMissing => Error.Validation(
+				"Server.CreateServer.ShutdownDelay.Missing",
+				"The shutdown delay field is required.");
 		}
 
         public static class  Delete

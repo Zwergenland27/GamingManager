@@ -22,6 +22,17 @@ public static partial class Errors
 			"A user with this id does not exist");
 
 		/// <summary>
+		/// The username / email or password is incorrect.
+		/// </summary>
+		public static Error InvalidLogin => Error.Conflict(
+			"User.InvalidLogin",
+			"The username / email or password is incorrect.");
+
+		public static Error InvalidEmailVerification => Error.Conflict(
+			"User.InvalidEmailVerification",
+			"The email verification token is invalid or has expired");
+
+		/// <summary>
 		/// The user with this username could not be found
 		/// </summary>
 		public static Error UsernameNotFound => Error.NotFound(

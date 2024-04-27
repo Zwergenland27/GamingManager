@@ -12,7 +12,7 @@ public class DeleteUserCommandBuilder : IRequestBuilder<DeleteUserParameters, De
 	public ValidatedRequiredProperty<DeleteUserCommand> Configure(RequiredPropertyBuilder<DeleteUserParameters, DeleteUserCommand> builder)
 	{
 		var username = builder.ClassProperty(r => r.Username)
-			.Required(Errors.Users.Delete.UsernameMissing)
+			.Required(Errors.User.Delete.UsernameMissing)
 			.Map(p => p.Username, value => new Username(value));
 
 		return builder.Build(() => new DeleteUserCommand(username));

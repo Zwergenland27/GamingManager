@@ -33,9 +33,11 @@ namespace GamingManager.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     HostedOn = table.Column<Guid>(type: "uuid", nullable: true),
                     Project = table.Column<Guid>(type: "uuid", nullable: false),
+                    ServerName = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     ShutdownDelay = table.Column<long>(type: "bigint", nullable: false),
                     ShutdownAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
                     Maintenance = table.Column<bool>(type: "boolean", nullable: false),
                     Unstartable = table.Column<bool>(type: "boolean", nullable: false)
                 },
@@ -66,7 +68,7 @@ namespace GamingManager.Infrastructure.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Start = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     End = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Ended = table.Column<bool>(type: "boolean", nullable: false)
+                    Public = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,9 +80,11 @@ namespace GamingManager.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Alias = table.Column<string>(type: "text", nullable: false),
+                    Hostname = table.Column<string>(type: "text", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
                     Mac = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
+                    ShutdownDelay = table.Column<long>(type: "bigint", nullable: false),
                     ShutdownAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastHeartbeatAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Maintenance = table.Column<bool>(type: "boolean", nullable: false),
@@ -99,8 +103,13 @@ namespace GamingManager.Infrastructure.Migrations
                     Firstname = table.Column<string>(type: "text", nullable: true),
                     Lastname = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: false),
+                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<int>(type: "integer", nullable: false)
+                    Role = table.Column<int>(type: "integer", nullable: false),
+                    _emailVerificationRequested = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    _emailVerificationToken = table.Column<string>(type: "text", nullable: true),
+                    _passwordHash = table.Column<string>(type: "text", nullable: false),
+                    _passwordSalt = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -203,6 +212,12 @@ namespace GamingManager.Infrastructure.Migrations
                 name: "IX_Accounts_Game_Uuid",
                 table: "Accounts",
                 columns: new[] { "Game", "Uuid" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameServers_ServerName",
+                table: "GameServers",
+                column: "ServerName",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Games_Name",

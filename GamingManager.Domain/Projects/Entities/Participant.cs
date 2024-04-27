@@ -127,6 +127,12 @@ public class Participant : Entity<ParticipantId>
         if (lastSession is null) return Errors.Projects.Participants.NoOpenSession;
         if(lastSession.End is not null && !lastSession.End.Irregular) return Errors.Projects.Participants.NoOpenSession;
 
+        if(lastSession.End is not null && lastSession.End.Irregular)
+        {
+            //remove duration of irregular session so that the duration wont be added twice
+            _playTime.Subtract(lastSession.Duration);
+        }
+
 		lastSession.Stop(leaveTime, irregular);
         Online = false;
         _playTime.Add(lastSession.Duration);

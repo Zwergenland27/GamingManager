@@ -57,7 +57,11 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 				end => end == null ? default : end.Value,
 				value => value == default ? null : new ProjectEndsAtUtc(value));
 
-		builder.Property(project => project.Ended);
+		builder.Ignore(project => project.Ended);
+
+		builder.Property(project => project.Public);
+
+		builder.Ignore(project => project.PlayersOnline);
 	}
 
 	private static void ConfigureParticipantsTable(EntityTypeBuilder<Project> builder)
@@ -70,15 +74,15 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
 			participantBuilder.HasKey(participant => new { participant.Project, participant.Id, });
 
-			participantBuilder.Property(participant => participant.Id)
-				.HasConversion(
-					participantId => participantId.Value,
-					value => new ParticipantId(value));
-
 			participantBuilder.Property(participant => participant.Project)
 				.HasConversion(
 					projectId => projectId.Value,
 					value => new ProjectId(value));
+
+			participantBuilder.Property(participant => participant.Id)
+				.HasConversion(
+					participantId => participantId.Value,
+					value => new ParticipantId(value));
 
 			participantBuilder.Property(participant => participant.Account)
 				.HasConversion(
@@ -154,22 +158,27 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
 			sessionBuilder.HasKey(session => new { session.Project, session.Participant, session.Id });
 
-			sessionBuilder.Property(session => session.Id)
+			sessionBuilder.Property(session => session.Project)
 				.HasConversion(
-					sessionId => sessionId.Value,
-					value => new SessionId(value));
+					projectId => projectId.Value,
+					value => new ProjectId(value));
 
 			sessionBuilder.Property(session => session.Participant)
 				.HasConversion(
 					participantId => participantId.Value,
 					value => new ParticipantId(value));
 
+			sessionBuilder.Property(session => session.Id)
+				.HasConversion(
+					sessionId => sessionId.Value,
+					value => new SessionId(value));
+
 			sessionBuilder.Property(sessionBuilder => sessionBuilder.Start)
 				.HasConversion(
 					start => start.Value,
 					value => new SessionStartsAtUtc(value));
 
-			sessionBuilder.OwnsOne(session => session.End);
+			sessionBuilder.OwnsOne(sessionBuilder => sessionBuilder.End);
 
 			sessionBuilder.Ignore(session => session.Duration);
 		});
@@ -188,15 +197,15 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
 			teamMemberBuilder.HasKey(teamMember => new { teamMember.Project, teamMember.Id });
 
-			teamMemberBuilder.Property(teamMember => teamMember.Id)
-				.HasConversion(
-					teamMemberId => teamMemberId.Value,
-					value => new TeamMemberId(value));
-
 			teamMemberBuilder.Property(teamMember => teamMember.Project)
 				.HasConversion(
 					projectId => projectId.Value,
 					value => new ProjectId(value));
+
+			teamMemberBuilder.Property(teamMember => teamMember.Id)
+				.HasConversion(
+					teamMemberId => teamMemberId.Value,
+					value => new TeamMemberId(value));
 
 			teamMemberBuilder.Property(teamMember => teamMember.User)
 				.HasConversion(

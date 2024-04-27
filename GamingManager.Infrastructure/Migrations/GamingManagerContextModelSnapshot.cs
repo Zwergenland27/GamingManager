@@ -54,6 +54,9 @@ namespace GamingManager.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("HostedOn")
                         .HasColumnType("uuid");
 
@@ -62,6 +65,10 @@ namespace GamingManager.Infrastructure.Migrations
 
                     b.Property<Guid>("Project")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("ServerName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("ShutdownAt")
                         .HasColumnType("timestamp with time zone");
@@ -76,6 +83,9 @@ namespace GamingManager.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ServerName")
+                        .IsUnique();
 
                     b.ToTable("GameServers", (string)null);
                 });
@@ -105,15 +115,15 @@ namespace GamingManager.Infrastructure.Migrations
                     b.Property<DateTime?>("End")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("Ended")
-                        .HasColumnType("boolean");
-
                     b.Property<Guid>("Game")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("Public")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid?>("Server")
                         .HasColumnType("uuid");
@@ -133,7 +143,11 @@ namespace GamingManager.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("Alias")
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Hostname")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -153,6 +167,9 @@ namespace GamingManager.Infrastructure.Migrations
                     b.Property<DateTime?>("ShutdownAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<uint>("ShutdownDelay")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -170,6 +187,9 @@ namespace GamingManager.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Firstname")
                         .HasColumnType("text");
 
@@ -180,6 +200,20 @@ namespace GamingManager.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("_emailVerificationRequested")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("_emailVerificationToken")
+                        .HasColumnType("text");
+
+                    b.Property<string>("_passwordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("_passwordSalt")
                         .IsRequired()
                         .HasColumnType("text");
 

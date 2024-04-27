@@ -1,4 +1,5 @@
 ﻿using CleanDomainValidation.Application;
+using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
 using GamingManager.Contracts.Features.GameServers.Commands;
@@ -12,7 +13,7 @@ public class GameServerShuttedDownCommandBuilder : IRequestBuilder<GameServerShu
 	{
 		var id = builder.ClassProperty(r => r.GameServerName)
 			.Required(Errors.GameServer.ShuttedDown.NameMissing)
-			.Map(p => p.GameServerName, value => new GameServerId(value));
+			.Map(p => p.Name, value => new GameServerName(value));
 
 		return builder.Build(() => new GameServerShuttedDownCommand(id));
 	}

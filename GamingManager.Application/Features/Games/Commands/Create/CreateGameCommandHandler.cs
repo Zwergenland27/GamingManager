@@ -8,7 +8,8 @@ namespace GamingManager.Application.Features.Games.Commands.CreateGame;
 
 public class CreateGameCommandHandler(
 	IUnitOfWork unitOfWork,
-	IGameRepository gameRepository) : ICommandHandler<CreateGameCommand, DetailedGameDto>
+	IGameRepository gameRepository,
+	IGameDtoRepository gameDtoRepository) : ICommandHandler<CreateGameCommand, DetailedGameDto>
 {
 	public async Task<CanFail<DetailedGameDto>> Handle(CreateGameCommand request, CancellationToken cancellationToken)
 	{
@@ -21,6 +22,6 @@ public class CreateGameCommandHandler(
 		gameRepository.Add(gameResult.Value);
 		await unitOfWork.SaveAsync(cancellationToken);
 
-		return DetailedGameDto.FromGame(gameResult.Value);
+		return (await gameDtoRepository.GetDetailedAsync(request.Name))!;
 	}
 }

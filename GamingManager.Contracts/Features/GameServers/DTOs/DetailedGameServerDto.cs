@@ -9,7 +9,7 @@ public record DetailedGameServerDto(
 	string Name,
 	uint ShutdownDelay,
 	ShortenedProjectDto Project,
-	DetailedServerDto? HostedOn)
+	ShortenedServerDto? HostedOn)
 {
 	/// <summary>
 	/// Unique id of the server
@@ -44,5 +44,5 @@ public record DetailedGameServerDto(
 	/// <remarks>
 	/// Only admins and team members can see this information
 	/// </remarks>
-	public DetailedServerDto? HostedOn { get; init; } = HostedOn;
+	public ShortenedServerDto? HostedOn { get; init; } = HostedOn;
 }

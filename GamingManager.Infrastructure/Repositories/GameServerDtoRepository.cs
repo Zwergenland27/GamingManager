@@ -58,11 +58,9 @@ public class GameServerDtoRepository(GamingManagerContext context) : IGameServer
 		var server = await context.Servers
 			.AsNoTracking()
 			.Where(server => server.Id == gameServer.HostedOn)
-			.Select(server => new DetailedServerDto(
+			.Select(server => new ShortenedServerDto(
 				server.Id.Value.ToString(),
-				server.Hostname.Value,
-				server.Mac.Value,
-				server.Address.ToString()))
+				server.Hostname.Value))
 			.FirstOrDefaultAsync();
 
 		return new DetailedGameServerDto(

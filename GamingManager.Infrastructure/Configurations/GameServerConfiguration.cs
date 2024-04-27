@@ -55,6 +55,8 @@ private static void ConfigureGameServersTable(EntityTypeBuilder<GameServer> buil
 			shutdownAt => shutdownAt == null ? default : shutdownAt.Value,
 			value => value == default ? null : new GameServerShutdownAtUtc(value));
 
+		builder.Property(gameServer => gameServer.Address);
+
 		builder.Property(gameServer => gameServer.Maintenance);
 
 		builder.Property(gameServer => gameServer.Unstartable);

@@ -11,7 +11,7 @@ public class ChangeShutdownDelayCommandHandler(
 {
 	public async Task<CanFail> Handle(ChangeShutdownDelayCommand request, CancellationToken cancellationToken)
 	{
-		var gameServer = await gameServerRepository.GetAsync(request.ServerName);
+		var gameServer = await gameServerRepository.GetAsync(request.GameServerName);
 		if (gameServer is null) return Errors.GameServers.ServerNameNotFound;
 
 		gameServer.ShutdownDelay = request.ShutdownDelay;

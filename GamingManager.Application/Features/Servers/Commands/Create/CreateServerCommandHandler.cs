@@ -8,7 +8,8 @@ namespace GamingManager.Application.Features.Servers.Commands.Create;
 
 public class CreateServerCommandHandler(
 	IUnitOfWork unitOfWork,
-	IServerRepository serverRepository) : ICommandHandler<CreateServerCommand, DetailedServerDto>
+	IServerRepository serverRepository,
+	IServerDtoRepository serverDtoRepository) : ICommandHandler<CreateServerCommand, DetailedServerDto>
 {
 	public async Task<CanFail<DetailedServerDto>> Handle(CreateServerCommand request, CancellationToken cancellationToken)
 	{
@@ -21,13 +22,13 @@ public class CreateServerCommandHandler(
 		var macUnique = await serverRepository.IsMacUniqueAsync(request.Mac);
 		if (!macUnique) return Errors.Servers.DuplicateMac;
 
-		var serverResult = Server.Create(request.Hostname, request.Address, request.Mac);
+		var serverResult = Server.Create(request.Hostname, request.Address, request.Mac, request.ShutdownDelay);
 		if(serverResult.HasFailed) return serverResult.Errors;
 
 		serverRepository.Add(serverResult.Value);
 
 		await unitOfWork.SaveAsync(cancellationToken);
 
-		return DetailedServerDto.FromServer(serverResult.Value);
+		return (await serverDtoRepository.GetDetailedAsync(request.Hostname))!;
 	}
 }

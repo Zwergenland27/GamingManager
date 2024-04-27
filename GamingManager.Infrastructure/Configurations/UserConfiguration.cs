@@ -44,5 +44,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 			.HasConversion(
 				email => email.Value,
 				value => Email.Create(value).Value);
+
+		builder.Property("_passwordHash");
+
+		builder.Property("_passwordSalt");
+
+		builder.Property("_emailVerificationToken");
+
+		builder.Property("_emailVerificationRequested");
 	}
 }

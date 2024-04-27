@@ -1,8 +1,16 @@
 ﻿using CleanDomainValidation.Application;
-using GamingManager.Application.Features.Users.Commands.Create;
+using GamingManager.Application.Features.Users.Commands.ChangePasword;
+using GamingManager.Application.Features.Users.Commands.Delete;
+using GamingManager.Application.Features.Users.Commands.EditPersonalData;
+using GamingManager.Application.Features.Users.Commands.Login;
+using GamingManager.Application.Features.Users.Commands.Register;
+using GamingManager.Application.Features.Users.Commands.RequestEmailVerification;
+using GamingManager.Application.Features.Users.Commands.RequestPasswordReset;
+using GamingManager.Application.Features.Users.Commands.VerifyEmail;
 using GamingManager.Contracts.Features.Users.Commands;
 using GamingManager.Contracts.Features.Users.DTOs;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GamingManager.WebApi.Controllers;
@@ -12,25 +20,221 @@ namespace GamingManager.WebApi.Controllers;
 public class UserController(IMediator mediator) : ApiController
 {
 	/// <summary>
-	/// Create a new user
+	/// Register a new user
 	/// </summary>
 	/// <response code="201">Returns new created user</response>
 	/// <response code="400">The request is invalid</response>
 	/// <response code="409">The username or the email is already used by another user</response>
-	[HttpPost]
+	[HttpPost("/register")]
 	[ProducesResponseType(typeof(DetailedUserDto), 201)]
 	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status409Conflict)]
-	public async Task<ActionResult<DetailedUserDto>> Create(CreateUserParameters parameters)
+	public async Task<ActionResult<DetailedUserDto>> Register(RegisterUserParameters parameters)
 	{
-		var commandResult = Builder<CreateUserCommand>
+		var commandResult = Builder<RegisterUserCommand>
 			.BindParameters(parameters)
-			.BuildUsing<CreateUserConfiguration>();
+			.BuildUsing<RegisterUserCommandBuilder>();
 		if (commandResult.HasFailed) return Problem(commandResult);
 
 		var result = await mediator.Send(commandResult.Value);
 		if (result.HasFailed) return Problem(result);
 
 		return Ok(result.Value);
+	}
+
+	/// <summary>
+	/// Login
+	/// </summary>
+	/// <response code="200">Returns jtw access token</response>
+	/// <response code="400">The request is invalid</response>
+	/// <response code="401">Invalid username / email or password</response>
+	[HttpPost("/login")]
+	[ProducesResponseType(typeof(DetailedUserDto), 201)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	public async Task<ActionResult<DetailedUserDto>> Login(LoginParameters parameters)
+	{
+		var commandResult = Builder<LoginCommand>
+			.BindParameters(parameters)
+			.BuildUsing<LoginCommandBuilder>();
+		if (commandResult.HasFailed) return Problem(commandResult);
+
+		var result = await mediator.Send(commandResult.Value);
+		if (result.HasFailed) return Problem(result);
+
+		return Ok(result.Value);
+	}
+
+	/// <summary>
+	/// Change password
+	/// </summary>
+	/// <param name="username">username of the user</param>
+	/// <response code="200">New password has been set</response>
+	/// <response code="400">The request is invalid</response>
+	/// <response code="401">Unauthorized</response>
+	/// <response code="404">User not found</response>
+	[Authorize]
+	[HttpPatch("{username}/Password")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<ActionResult> ChangePassword(string username, ChangePasswordParameters parameters)
+	{
+		if (username != User.Identity!.Name) return Unauthorized();
+
+		var commandResult = Builder<ChangePasswordCommand>
+			.BindParameters(parameters)
+			.MapParameter(p => p.Username, username)
+			.BuildUsing<ChangePasswordCommandBuilder>();
+		if (commandResult.HasFailed) return Problem(commandResult);
+
+		var result = await mediator.Send(commandResult.Value);
+		if (result.HasFailed) return Problem(result);
+
+		return Ok();
+	}
+
+	/// <summary>
+	/// Request password reset
+	/// </summary>
+	/// <param name="email">email of the user</param>
+	/// <response code="200">Email verification has been sent</response>
+	/// <response code="400">The request is invalid</response>
+	/// <response code="401">Unauthorized</response>
+	/// <response code="404">User not found</response>
+	[HttpPut("{email}/Password/reset")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<ActionResult> ResetPassword(string email)
+	{
+		var commandResult = Builder<RequestPasswordResetCommand>
+			.BindParameters(new RequestPasswordResetParameters())
+			.MapParameter(p => p.Email, email)
+			.BuildUsing<RequestPasswordResetCommandBuilder>();
+		if (commandResult.HasFailed) return Problem(commandResult);
+
+		var result = await mediator.Send(commandResult.Value);
+		if (result.HasFailed) return Problem(result);
+
+		return Ok();
+	}
+
+	/// <summary>
+	/// Delete username
+	/// </summary>
+	/// <param name="username">username of the user</param>
+	/// <response code="200">User has been deleted</response>
+	/// <response code="400">The request is invalid</response>
+	/// <response code="401">Unauthorized</response>
+	/// <response code="404">User not found</response>
+	[Authorize]
+	[HttpDelete("{username}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<ActionResult> Delete(string username)
+	{
+		if (username != User.Identity!.Name) return Unauthorized();
+
+		var commandResult = Builder<DeleteUserCommand>
+			.BindParameters(new DeleteUserParameters())
+			.MapParameter(p => p.Username, username)
+			.BuildUsing<DeleteUserCommandBuilder>();
+		if (commandResult.HasFailed) return Problem(commandResult);
+
+		var result = await mediator.Send(commandResult.Value);
+		if (result.HasFailed) return Problem(result);
+
+		return Ok();
+	}
+
+	/// <summary>
+	/// Change personal data
+	/// </summary>
+	/// <param name="username">username of the user</param>
+	/// <response code="200">User has been edited</response>
+	/// <response code="400">The request is invalid</response>
+	/// <response code="401">Unauthorized</response>
+	/// <response code="404">User not found</response>
+	[Authorize]
+	[HttpPatch("{username}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<ActionResult> Edit(string username, EditPersonalDataParameters parameters)
+	{
+		if (username != User.Identity!.Name) return Unauthorized();
+
+		var commandResult = Builder<EditPersonalDataCommand>
+			.BindParameters(parameters)
+			.MapParameter(p => p.CurrentUsername, username)
+			.BuildUsing<EditPersonalDataCommandBuilder>();
+		if (commandResult.HasFailed) return Problem(commandResult);
+
+		var result = await mediator.Send(commandResult.Value);
+		if (result.HasFailed) return Problem(result);
+
+		return Ok();
+	}
+
+	/// <summary>
+	/// Request email verification
+	/// </summary>
+	/// <param name="username">username of the user</param>
+	/// <response code="200">Email verification has been sent</response>
+	/// <response code="400">The request is invalid</response>
+	/// <response code="401">Unauthorized</response>
+	/// <response code="404">User not found</response>
+	[Authorize]
+	[HttpPut("{username}/Email/verify")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<ActionResult> VerifyEmail(string username)
+	{
+		if (username != User.Identity!.Name) return Unauthorized();
+
+		var commandResult = Builder<RequestEmailVerificationCommand>
+			.BindParameters(new RequestEmailVerificationParameters())
+			.MapParameter(p => p.Username, username)
+			.BuildUsing<RequestEmailVerificationCommandBuilder>();
+		if (commandResult.HasFailed) return Problem(commandResult);
+
+		var result = await mediator.Send(commandResult.Value);
+		if (result.HasFailed) return Problem(result);
+
+		return Ok();
+	}
+
+	/// <summary>
+	/// Verify email
+	/// </summary>
+	/// <param name="username">username of the user</param>
+	/// <param name="token">token received by email</param>
+	/// <response code="200">Email has been verified</response>
+	/// <response code="400">The request is invalid</response>
+	/// <response code="401">Unauthorized</response>
+	/// <response code="404">User not found</response>
+	[HttpGet("{username}/Email/verify/{token}")]
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status404NotFound)]
+	public async Task<ActionResult> VerifyEmail(string username, string token)
+	{
+		var commandResult = Builder<VerifyEmailCommand>
+			.BindParameters(new VerifyEmailParameters())
+			.MapParameter(p => p.Username, username)
+			.MapParameter(p => p.Token, token)
+			.BuildUsing<VerifyEmailCommandBuilder>();
+		if (commandResult.HasFailed) return Problem(commandResult);
+
+		var result = await mediator.Send(commandResult.Value);
+		if (result.HasFailed) return Problem(result);
+
+		return Ok();
 	}
 }

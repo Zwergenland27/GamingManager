@@ -1,4 +1,5 @@
 ﻿using CleanDomainValidation.Application;
+using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
 using GamingManager.Contracts.Features.Accounts.Commands;

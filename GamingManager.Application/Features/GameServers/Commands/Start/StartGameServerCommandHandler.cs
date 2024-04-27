@@ -14,7 +14,7 @@ public class StartGameServerCommandHandler(
 {
 	public async Task<CanFail> Handle(StartGameServerCommand request, CancellationToken cancellationToken)
 	{
-		var gameServer = await gameServerRepository.GetAsync(request.ServerName);
+		var gameServer = await gameServerRepository.GetAsync(request.GameServerName);
 		if (gameServer is null) return Errors.GameServers.ServerNameNotFound;
 
 		if (gameServer.HostedOn is null) return Errors.GameServers.ServerNotHosted;

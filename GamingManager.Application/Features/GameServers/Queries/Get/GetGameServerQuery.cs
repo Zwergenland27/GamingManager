@@ -1,4 +1,5 @@
 ﻿using CleanDomainValidation.Application;
+using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
 using GamingManager.Contracts.Features.GameServers.DTOs;
@@ -13,7 +14,7 @@ public class GetGameServerQueryBuilder : IRequestBuilder<GetGameServerParameters
 	{
 		var name = builder.ClassProperty(r => r.GameServerName)
 			.Required(Errors.GameServer.Get.NameMissing)
-			.Map(p => p.GameServerName, value => new GameServerName(value));
+			.Map(p => p.Name, value => new GameServerName(value));
 
 		return builder.Build(() => new GetGameServerQuery(name));
 	}

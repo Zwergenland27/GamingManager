@@ -13,7 +13,7 @@ public class GetUserQueryBuilder : IRequestBuilder<GetUserParameters, GetUserQue
 	public ValidatedRequiredProperty<GetUserQuery> Configure(RequiredPropertyBuilder<GetUserParameters, GetUserQuery> builder)
 	{
 		var username = builder.ClassProperty(r => r.Username)
-			.Required(Errors.Users.Get.UsernameMissing)
+			.Required(Errors.User.Get.UsernameMissing)
 			.Map(p => p.CurrentUsername, value => new Username(value));
 
 		return builder.Build(() => new GetUserQuery(username));
