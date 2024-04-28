@@ -2,9 +2,9 @@
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class UnitOfWork(GamingManagerContext context) : IUnitOfWork
+public class UnitOfWork(GamingManagerDomainContext context) : IUnitOfWork
 {
-	private readonly GamingManagerContext _context = context;
+	private readonly GamingManagerDomainContext _context = context;
 
 	public async Task<int> SaveAsync(CancellationToken cancellationToken)
 	{

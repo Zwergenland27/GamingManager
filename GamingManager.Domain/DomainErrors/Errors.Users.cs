@@ -28,9 +28,26 @@ public static partial class Errors
 			"User.InvalidLogin",
 			"The username / email or password is incorrect.");
 
+		/// <summary>
+		/// The refresh token is invalid.
+		/// </summary>
+		public static Error InvalidRefreshToken => Error.Conflict(
+			"User.InvalidRefreshToken",
+			"The refresh token is invalid.");
+
+		/// <summary>
+		/// The email verification token is invalid or has expired.
+		/// </summary>
 		public static Error InvalidEmailVerification => Error.Conflict(
 			"User.InvalidEmailVerification",
-			"The email verification token is invalid or has expired");
+			"The email verification token is invalid or has expired.");
+
+		/// <summary>
+		/// The email has already been confirmed.
+		/// </summary>
+		public static Error EmailAlreadyConfirmed => Error.Conflict(
+			"User.EmailAlreadyConfirmed",
+			"The email has already been confirmed.");
 
 		/// <summary>
 		/// The user with this username could not be found

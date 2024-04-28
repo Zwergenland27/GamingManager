@@ -2,7 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Projects.Commands;
+using GamingManager.Contracts.Features.Projects.Commands.AllowAccount;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.Projects.ValueObjects;
 
@@ -26,4 +26,4 @@ public class AllowAccountOnProjectCommandBuilder : IRequestBuilder<AllowAccountP
 
 public record AllowAccountOnProjectCommand(
 	ProjectId ProjectId,
-	AccountId AccountId) : ICommand;
+	AccountId AccountId) : ICommand<AllowAccountResult>;

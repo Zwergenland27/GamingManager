@@ -31,6 +31,17 @@ public static partial class Errors
 				"The password field is required.");
 		}
 
+		public static class RefreshJwtToken
+		{
+			public static Error UsernameMissing => Error.Validation(
+				"User.RefreshJwtToken.Username.Missing",
+				"The username field is required.");
+
+			public static Error RefreshTokenMissing => Error.Validation(
+				"User.RefreshJwtToken.RefreshToken.Missing",
+				"The refresh token field is required.");
+		}
+
 		public static class RequestEmailVerification
 		{
 			public static Error UsernameMissing => Error.Validation(

@@ -2,8 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Games.Commands;
-using GamingManager.Contracts.Features.Games.DTOs;
+using GamingManager.Contracts.Features.Games.Commands.Create;
 using GamingManager.Domain.Games.ValueObjects;
 
 namespace GamingManager.Application.Features.Games.Commands.CreateGame;
@@ -20,4 +19,4 @@ public class CreateGameConfiguration : IRequestBuilder<CreateGameParameters, Cre
 	}
 }
 
-public record CreateGameCommand(GameName Name) : ICommand<DetailedGameDto>;
+public record CreateGameCommand(GameName Name) : ICommand<CreateGameResult>;

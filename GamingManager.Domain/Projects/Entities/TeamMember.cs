@@ -11,8 +11,8 @@ public class TeamMember : Entity<TeamMemberId>
 		UserId userId,
 		TeamRole role) : base(TeamMemberId.CreateNew())
 	{
-		Project = projectId;
-		User = userId;
+		ProjectId = projectId;
+		UserId = userId;
 		Role = role;
 		Since = new TeamMemberSinceUtc(DateTime.UtcNow);
 	}
@@ -21,9 +21,9 @@ public class TeamMember : Entity<TeamMemberId>
 	private TeamMember() : base(default!) { }
 #pragma warning restore CS8618
 
-	public ProjectId Project { get; }
+	public ProjectId ProjectId { get; }
 
-	public UserId User { get; private init; }
+	public UserId UserId { get; private init; }
 
 	public TeamRole Role { get; set; }
 

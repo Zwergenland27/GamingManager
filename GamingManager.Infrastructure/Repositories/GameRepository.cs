@@ -1,11 +1,10 @@
 ﻿using GamingManager.Domain.Games;
 using GamingManager.Domain.Games.ValueObjects;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.CodeAnalysis;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class GameRepository(GamingManagerContext context) : IGameRepository
+public class GameRepository(GamingManagerDomainContext context) : IGameRepository
 {
 	public void Add(Game game)
 	{

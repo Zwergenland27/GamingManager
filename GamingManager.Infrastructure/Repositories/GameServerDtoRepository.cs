@@ -1,73 +1,31 @@
-﻿using GamingManager.Application.Features.Games;
-using GamingManager.Application.Features.GameServers;
-using GamingManager.Application.Features.Projects.Commands.SetPlannedEnd;
-using GamingManager.Application.Features.Projects.DTOs;
-using GamingManager.Contracts.Features.GameServers.DTOs;
-using GamingManager.Contracts.Features.Servers.DTOs;
+﻿using GamingManager.Application.Features.GameServers;
+using GamingManager.Contracts.Features.GameServers.Queries.Get;
 using GamingManager.Domain.GameServers.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class GameServerDtoRepository(GamingManagerContext context) : IGameServerDtoRepository
+public class GameServerDtoRepository(GamingManagerReadContext context) : IGameServerDtoRepository
 {
-	public IAsyncEnumerable<ShortenedGameServerDto> GetAllAsync()
+	public async Task<GetGameServerResult?> GetAsync(GameServerName gameServerName)
 	{
-		return context.GameServers
-			.AsNoTracking()
-			.Join(context.Projects.AsNoTracking(),
-				gameServer => gameServer.Project,
-				project => project.Id,
-				(gameServer, project) => new { GameServer = gameServer, Project = project })
-			.Join(context.Games.AsNoTracking(),
-				prevJoin => prevJoin.Project.Game,
-				game => game.Id,
-				(prevJoin, game) => new ShortenedGameServerDto(
-					prevJoin.GameServer.Id.Value.ToString(),
-					prevJoin.GameServer.ServerName.Value,
-					new ShortenedProjectDto(
-						prevJoin.Project.Id.Value.ToString(),
-						prevJoin.Project.Name.Value,
-						game.ToDto()
-						)))
-			.AsAsyncEnumerable();
-	}
-
-	public async Task<DetailedGameServerDto?> GetDetailedAsync(GameServerName gameServerName)
-	{
-		///TODO: Refactor for better performance
-		var gameServer = await context.GameServers
-			.AsNoTracking()
-			.FirstOrDefaultAsync(gameServer => gameServer.ServerName == gameServerName);
-
-		if (gameServer is null) return null;
-
-		var project = await context.Projects
-			.AsNoTracking()
-			.Where(project => project.Id == gameServer.Project)
-			.Join(context.Games.AsNoTracking(),
-				project => project.Game,
-				game => game.Id,
-				(project, game) => new ShortenedProjectDto(
-					project.Id.Value.ToString(),
-					project.Name.Value,
-					game.ToDto()
-					))
-			.FirstAsync();
-
-		var server = await context.Servers
-			.AsNoTracking()
-			.Where(server => server.Id == gameServer.HostedOn)
-			.Select(server => new ShortenedServerDto(
-				server.Id.Value.ToString(),
-				server.Hostname.Value))
+		return await context.GameServers
+			.Include(gameServer => gameServer.Project)
+			.Include(gameServer => gameServer.HostedOn)
+			.Where(gameServer => gameServer.ServerName == gameServerName.Value)
+			.Select(gameServer => new GetGameServerResult(
+				gameServer.Id.ToString(),
+				gameServer.ServerName,
+				gameServer.ShutdownDelay,
+				gameServer.Address,
+				gameServer.Status.ToString(),
+				new GetGameServerProjectResult(
+					gameServer.Project.Id.ToString(),
+					gameServer.Project.Name),
+				ReferenceEquals(gameServer.HostedOn, null) ? null : new GetGameServerServerResult(
+					gameServer.HostedOn.Id.ToString(),
+					gameServer.HostedOn.Hostname,
+					gameServer.HostedOn.Status.ToString())))
 			.FirstOrDefaultAsync();
-
-		return new DetailedGameServerDto(
-			gameServer.Id.Value.ToString(),
-			gameServer.ServerName.Value,
-			gameServer.ShutdownDelay.Minutes,
-			project,
-			server);
 	}
 }

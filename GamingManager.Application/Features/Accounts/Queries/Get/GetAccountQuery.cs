@@ -2,8 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Accounts.DTOs;
-using GamingManager.Contracts.Features.Accounts.Queries;
+using GamingManager.Contracts.Features.Accounts.Queries.Get;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.Games.ValueObjects;
 
@@ -27,4 +26,4 @@ public class GetAccountQueryBuilder : IRequestBuilder<GetAccountParameters, GetA
 
 public record GetAccountQuery(
 	GameName GameName,
-	AccountName AccountName) : IQuery<DetailedAccountDto>;
+	AccountName AccountName) : IQuery<GetAccountResult>;

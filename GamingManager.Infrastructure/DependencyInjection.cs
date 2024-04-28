@@ -29,7 +29,8 @@ public static class DependencyInjection
 	public static IServiceCollection AddInfrastructureLayer(this IServiceCollection services, IConfigurationManager configuration)
 	{
 		services.AddInterceptors();
-		services.AddGamingManagerContext(configuration);
+		services.AddGamingManagerDomainContext(configuration);
+		services.AddGamingManagerReadContext(configuration);
 		services.AddRepositories();
 		services.AddJwtAuthentification(configuration);
 		return services;
@@ -40,18 +41,32 @@ public static class DependencyInjection
 		services.AddScoped<PublishDomainEventsInterceptor>();
 	}
 
-	private static void AddGamingManagerContext(this IServiceCollection services, IConfiguration configuration)
+	private static void AddGamingManagerDomainContext(this IServiceCollection services, IConfiguration configuration)
 	{
 		var connectionString = configuration.GetConnectionString("GameServerDb");
-		services.AddDbContext<GamingManagerContext>((sp, options) =>
+		services.AddDbContext<GamingManagerDomainContext>((sp, options) =>
 		{
 			var interceptor = sp.GetService<PublishDomainEventsInterceptor>()!;
 
 			options.UseNpgsql(connectionString, builder =>
 			{
-				builder.MigrationsAssembly(typeof(GamingManagerContext).Assembly.FullName);
+				builder.MigrationsAssembly(typeof(GamingManagerDomainContext).Assembly.FullName);
 			});
 			options.AddInterceptors(interceptor);
+		});
+	}
+
+	private static void AddGamingManagerReadContext(this IServiceCollection services, IConfiguration configuration)
+	{
+		var connectionString = configuration.GetConnectionString("GameServerDb");
+		services.AddDbContext<GamingManagerReadContext>(options =>
+		{
+			options.UseNpgsql(connectionString, builder =>
+			{
+				builder.MigrationsAssembly(typeof(GamingManagerReadContext).Assembly.FullName);
+				builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+			});
+			options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 		});
 	}
 
@@ -79,7 +94,7 @@ public static class DependencyInjection
 		configuration.Bind(JwtSettings.SectionName, jwtSettings);
 
 		services.AddSingleton(Options.Create(jwtSettings));
-		services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+		services.AddSingleton<ITokenGenerator, TokenGenerator>();
 
 		services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 			.AddJwtBearer(options =>

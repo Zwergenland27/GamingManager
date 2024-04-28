@@ -2,7 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.GameServers.Commands;
+using GamingManager.Contracts.Features.GameServers.Commands.Start;
 using GamingManager.Domain.GameServers.ValueObjects;
 
 namespace GamingManager.Application.Features.GameServers.Commands.Start;

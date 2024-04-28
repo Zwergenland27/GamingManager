@@ -14,7 +14,8 @@ public class RequestEmailVerificationCommandHandler(
 		var user = await userRepository.GetAsync(request.Username);
 		if (user is null) return Errors.Users.UsernameNotFound;
 
-		user.RequestEmailVerification();
+		var result = user.RequestEmailVerification();
+		if (result.HasFailed) return result.Errors;
 
 		await unitOfWork.SaveAsync(cancellationToken);
 

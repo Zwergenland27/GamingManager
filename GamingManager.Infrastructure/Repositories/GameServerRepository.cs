@@ -2,11 +2,10 @@
 using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Servers.ValueObjects;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Contracts;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class GameServerRepository(GamingManagerContext context) : IGameServerRepository
+public class GameServerRepository(GamingManagerDomainContext context) : IGameServerRepository
 {
 	public void Add(GameServer gameServer)
 	{
@@ -20,17 +19,17 @@ public class GameServerRepository(GamingManagerContext context) : IGameServerRep
 
 	public IAsyncEnumerable<GameServer> GetAllOfServerAsync(ServerId serverId)
 	{
-		return context.GameServers.Where(gameServer => gameServer.HostedOn == serverId).AsAsyncEnumerable();
+		return context.GameServers.Where(gameServer => gameServer.HostedOnId == serverId).AsAsyncEnumerable();
 	}
 
 	public IAsyncEnumerable<GameServer> GetAllOnlineAsync(ServerId serverId)
 	{
-		return context.GameServers.Where(gameServer => gameServer.HostedOn == serverId && gameServer.Status == GameServerStatus.Online).AsAsyncEnumerable();
+		return context.GameServers.Where(gameServer => gameServer.HostedOnId == serverId && gameServer.Status == GameServerStatus.Online).AsAsyncEnumerable();
 	}
 
 	public IAsyncEnumerable<GameServer> GetAllStartablesAsync(ServerId serverId)
 	{
-		return context.GameServers.Where(gameServer => gameServer.HostedOn == serverId && gameServer.Status != GameServerStatus.WaitingForHardware).AsAsyncEnumerable();
+		return context.GameServers.Where(gameServer => gameServer.HostedOnId == serverId && gameServer.Status != GameServerStatus.WaitingForHardware).AsAsyncEnumerable();
 	}
 
 	public async Task<GameServer?> GetAsync(GameServerId id)

@@ -1,13 +1,13 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Application.Abstractions;
-using GamingManager.Application.Features.Projects.DTOs;
+using GamingManager.Contracts.Features.Projects.Queries.GetAll;
 
 namespace GamingManager.Application.Features.Projects.Queries.GetAll;
 
 public class GetAllProjectsQueryHandler(
-	IProjectDtoRepository projectDtoRepository) : IQueryHandler<GetAllProjectsQuery, IEnumerable<ShortenedProjectDto>>
+	IProjectDtoRepository projectDtoRepository) : IQueryHandler<GetAllProjectsQuery, IEnumerable<GetAllProjectsResult>>
 {
-	public async Task<CanFail<IEnumerable<ShortenedProjectDto>>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
+	public async Task<CanFail<IEnumerable<GetAllProjectsResult>>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
 	{
 		return await projectDtoRepository.GetAllAsync().ToListAsync(cancellationToken);
 	}

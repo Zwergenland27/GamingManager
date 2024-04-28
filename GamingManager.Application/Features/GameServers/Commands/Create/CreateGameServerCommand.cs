@@ -2,8 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.GameServers.Commands;
-using GamingManager.Contracts.Features.GameServers.DTOs;
+using GamingManager.Contracts.Features.GameServers.Commands.Create;
 using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Projects.ValueObjects;
 
@@ -32,4 +31,4 @@ public class CreateGameServerCommandBuilder : IRequestBuilder<CreateGameServerPa
 public record CreateGameServerCommand(
 	GameServerName GameServerName,
 	ProjectName ProjectName,
-	GameServerAutoShutdownDelay ShutdownDelay) : ICommand<DetailedGameServerDto>;
+	GameServerAutoShutdownDelay ShutdownDelay) : ICommand<CreateGameServerResult>;

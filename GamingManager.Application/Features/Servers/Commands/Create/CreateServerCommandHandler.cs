@@ -1,6 +1,6 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Application.Abstractions;
-using GamingManager.Contracts.Features.Servers.DTOs;
+using GamingManager.Contracts.Features.Servers.Commands.Create;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.Servers;
 
@@ -8,10 +8,9 @@ namespace GamingManager.Application.Features.Servers.Commands.Create;
 
 public class CreateServerCommandHandler(
 	IUnitOfWork unitOfWork,
-	IServerRepository serverRepository,
-	IServerDtoRepository serverDtoRepository) : ICommandHandler<CreateServerCommand, DetailedServerDto>
+	IServerRepository serverRepository) : ICommandHandler<CreateServerCommand, CreateServerResult>
 {
-	public async Task<CanFail<DetailedServerDto>> Handle(CreateServerCommand request, CancellationToken cancellationToken)
+	public async Task<CanFail<CreateServerResult>> Handle(CreateServerCommand request, CancellationToken cancellationToken)
 	{
 		var hostnameUnique = await serverRepository.IsHostnameUniqueAsync(request.Hostname);
 		if (!hostnameUnique) return Errors.Servers.DuplicateHostname;
@@ -29,6 +28,11 @@ public class CreateServerCommandHandler(
 
 		await unitOfWork.SaveAsync(cancellationToken);
 
-		return (await serverDtoRepository.GetDetailedAsync(request.Hostname))!;
+		return new CreateServerResult(
+			Id: serverResult.Value.Id.Value.ToString(),
+			Hostname: serverResult.Value.Hostname.Value,
+			Status: serverResult.Value.Status.ToString(),
+			Mac: serverResult.Value.Mac.Value,
+			Address: serverResult.Value.Address.ToString());
 	}
 }

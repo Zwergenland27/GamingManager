@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class UserRepository(GamingManagerContext context) : IUserRepository
+public class UserRepository(GamingManagerDomainContext context) : IUserRepository
 {
 	public void Add(User user)
 	{

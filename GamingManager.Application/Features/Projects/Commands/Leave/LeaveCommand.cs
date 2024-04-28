@@ -2,7 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Projects.Commands;
+using GamingManager.Contracts.Features.Projects.Commands.Leave;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.Projects.ValueObjects;
 

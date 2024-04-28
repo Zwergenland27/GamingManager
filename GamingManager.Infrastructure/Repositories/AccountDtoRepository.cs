@@ -1,64 +1,48 @@
 ﻿using GamingManager.Application.Features.Accounts;
-using GamingManager.Application.Features.Projects.DTOs;
-using GamingManager.Contracts.Features.Accounts.DTOs;
-using GamingManager.Domain.Accounts;
+using GamingManager.Contracts.Features.Accounts.Queries.Get;
+using GamingManager.Contracts.Features.Accounts.Queries.GetAllOfGame;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.Games.ValueObjects;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class AccountDtoRepository(GamingManagerContext context) : IAccountDtoRepository
+public class AccountDtoRepository(GamingManagerReadContext context) : IAccountDtoRepository
 {
-	public IAsyncEnumerable<ShortenedAccountDto> GetAllAsync(GameId gameId)
+	public IAsyncEnumerable<GetAllAccountsResult> GetAllAsync(GameId gameId)
 	{
-		return context.GetAccountsAsync(account => account.Game == gameId);
+		return context.Accounts
+			.Include(account => account.User)
+			.Where(account => account.GameId == gameId.Value)
+			.Select(account => new GetAllAccountsResult(
+				account.Id.ToString(),
+				account.Name,
+				account.Uuid,
+				ReferenceEquals(account.User, null) ? null : new GetAllAccountsUserResult(
+					account.User.Id.ToString(),
+					account.User.Username)))
+			.AsAsyncEnumerable();
 	}
 
-	public async Task<DetailedAccountDto?> GetDetailedAsync(AccountId accountId)
+	public async Task<GetAccountResult?> GetAsync(GameId gameId, AccountName name)
 	{
-		return await GetDetailedAsync(account => account.Id == accountId);
-	}
-
-	public async Task<DetailedAccountDto?> GetDetailedAsync(GameId gameId, AccountName name)
-	{
-		return await GetDetailedAsync(account => account.Game == gameId && account.Name == name);
-	}
-
-	private async Task<DetailedAccountDto?> GetDetailedAsync(Expression<Func<Account, bool>> predicate)
-	{
-		//TODO: Refactor for better performance
-
-		var account = await context.Accounts
-			.AsNoTracking()
-			.FirstOrDefaultAsync(predicate);
-
-		if (account is null) return null;
-
-		var user = await context.GetUsersAsync(user => user.Id == account.User)
+		return await context.Accounts
+			.Include(account => account.User)
+			.Include(account => account.Participants)
+				.ThenInclude(participant => participant.Project)
+			.Where(account => account.GameId == gameId.Value && account.Name == name.Value)
+			.Select(account => new GetAccountResult(
+				account.Id.ToString(),
+				account.Name,
+				account.Uuid,
+				ReferenceEquals(account.User, null) ? null : new GetAccountUserResult(
+					account.User.Id.ToString(),
+					account.User.Username),
+				account.Verified,
+				account.Participants.Select(participant => new GetAccountProjectsResult(
+					participant.Project.Id.ToString(),
+					participant.Project.Name))
+				.ToList()))
 			.FirstOrDefaultAsync();
-
-		var game = await context.GetGamesAsync(game => game.Id == account.Game)
-			.FirstAsync();
-
-		var projects = await context.Projects
-			.AsNoTracking()
-			.IgnoreAutoIncludes()
-			.Include(project => project.Participants)
-			.Where(project => project.Participants.Any(participant => participant.Account == account.Id))
-			.Select(project => new ShortenedProjectDto(
-				project.Id.Value.ToString(),
-				project.Name.Value,
-				game))
-			.ToListAsync();
-
-		return new DetailedAccountDto(
-			account.Id.Value.ToString(),
-			account.Name.Value,
-			account.Uuid?.Value,
-			user,
-			game,
-			projects);
 	}
 }

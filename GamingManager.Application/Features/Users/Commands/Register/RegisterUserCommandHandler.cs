@@ -1,6 +1,6 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Application.Abstractions;
-using GamingManager.Contracts.Features.Users.DTOs;
+using GamingManager.Contracts.Features.Users.Commands.Register;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.Users;
 
@@ -8,10 +8,9 @@ namespace GamingManager.Application.Features.Users.Commands.Register;
 
 public class RegisterUserCommandHandler(
 	IUnitOfWork unitOfWork,
-	IUserRepository userRepository,
-	IUserDtoRepository userDtoRepository) : ICommandHandler<RegisterUserCommand, DetailedUserDto>
+	IUserRepository userRepository) : ICommandHandler<RegisterUserCommand, RegisterUserResult>
 {
-	public async Task<CanFail<DetailedUserDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+	public async Task<CanFail<RegisterUserResult>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
 	{
 		var usernameUnique = await userRepository.IsUsernameUnique(request.Username);
 		if (!usernameUnique) return Errors.Users.DuplicateUsername;
@@ -28,6 +27,13 @@ public class RegisterUserCommandHandler(
 
 		await unitOfWork.SaveAsync(cancellationToken);
 
-		return (await userDtoRepository.GetDetailedAsync(request.Username))!;
+		return new RegisterUserResult(
+			Id: userResult.Value.Id.Value.ToString(),
+			Username: userResult.Value.Username.Value,
+			Email: userResult.Value.Email.Value,
+			Role: userResult.Value.Role.ToString(),
+			Firstname: userResult.Value.Firstname?.Value,
+			Lastname: userResult.Value.Lastname?.Value,
+			EmailVerified: userResult.Value.EmailConfirmed);
 	}
 }

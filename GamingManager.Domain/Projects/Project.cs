@@ -4,13 +4,11 @@ using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.Games;
 using GamingManager.Domain.Users;
 using GamingManager.Domain.Accounts;
-using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.Games.ValueObjects;
 using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Projects.ValueObjects;
 using GamingManager.Domain.Projects.Events;
 using GamingManager.Domain.Projects.Entities;
-using System.Reflection.Metadata.Ecma335;
 
 namespace GamingManager.Domain.Projects;
 
@@ -29,7 +27,7 @@ public class Project : AggregateRoot<ProjectId>
 		ProjectName name,
 		ProjectStartsAtUtc start) : base(id)
 	{
-		Game = gameId;
+		GameId = gameId;
 		Name = name;
 		Start = start;
 		Public = false;
@@ -38,9 +36,9 @@ public class Project : AggregateRoot<ProjectId>
 	private Project() : base(default!) { }
 #pragma warning restore CS8618
 
-	public GameId Game { get; private set; }
+	public GameId GameId { get; private set; }
 
-	public GameServerId? Server { get; private set; }
+	public GameServerId? ServerId { get; private set; }
 
 	public ProjectName Name { get; private set; }
 
@@ -76,21 +74,21 @@ public class Project : AggregateRoot<ProjectId>
 
 	public CanFail Join(Account account, SessionStartsAtUtc joinTime)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
+		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		if (Ended) return Errors.Projects.Ended;
 
 		if (participant.IsCurrentlyBanned) return Errors.Projects.Participants.Banned;
-		return participant.Join(Server!, joinTime);
+		return participant.Join(ServerId!, joinTime);
 	}
 
 	public CanFail Leave(Account account, SessionEndsAtUtc leaveTime)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
+		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
-		var leaveResult = participant.Leave(Server!, leaveTime, false);
+		var leaveResult = participant.Leave(ServerId!, leaveTime, false);
 		if (leaveResult.HasFailed) return leaveResult.Errors;
 
 		if(!_participants.Any(participant => participant.Online))
@@ -109,7 +107,7 @@ public class Project : AggregateRoot<ProjectId>
 		
 		foreach (var participant in onlineParticipants)
 		{
-			var leaveResult = participant.Leave(Server!, new SessionEndsAtUtc(crashedAtUtc.Value), true);
+			var leaveResult = participant.Leave(ServerId!, new SessionEndsAtUtc(crashedAtUtc.Value), true);
 			result.InheritFailure(result);
 		}
 
@@ -118,7 +116,7 @@ public class Project : AggregateRoot<ProjectId>
 
 	public CanFail<Ban> BanPermanent(Account account, Reason reason)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
+		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		return participant.BanPermanent(reason);
@@ -126,7 +124,7 @@ public class Project : AggregateRoot<ProjectId>
 
 	public CanFail<Ban> BanTemporary(Account account, Reason reason, TimeSpan duration)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
+		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		return participant.BanTemporary(reason, duration);
@@ -134,7 +132,7 @@ public class Project : AggregateRoot<ProjectId>
 
 	public CanFail Pardon(Account account)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.Account == account.Id);
+		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		return participant.Pardon();
@@ -142,8 +140,8 @@ public class Project : AggregateRoot<ProjectId>
 
 	public CanFail<Participant> Allow(Account account)
 	{
-		if (account.Game != Game) return Errors.Projects.Participants.WrongGame;
-		if (_participants.Any(participant => participant.Account == account.Id)) return Errors.Projects.Participants.AlreadyParticipating;
+		if (account.GameId != GameId) return Errors.Projects.Participants.WrongGame;
+		if (_participants.Any(participant => participant.AccountId == account.Id)) return Errors.Projects.Participants.AlreadyParticipating;
 
 		var participant = new Participant(Id, account.Id);
 		RaiseDomainEvent(new AccountAllowedEvent(Id, account.Id, participant.Id));
@@ -152,7 +150,7 @@ public class Project : AggregateRoot<ProjectId>
 
 	public CanFail AddToTeam(User user, TeamRole role)
 	{
-		if (_team.Any(teamMember => teamMember.User == user.Id)) return Errors.Projects.Team.AlreadyMember;
+		if (_team.Any(teamMember => teamMember.UserId == user.Id)) return Errors.Projects.Team.AlreadyMember;
 
 		var teamMember = new TeamMember(Id, user.Id, role);
 
@@ -163,7 +161,7 @@ public class Project : AggregateRoot<ProjectId>
 
 	public CanFail RemoveFromTeam(User user)
 	{
-		var teamMember = _team.FirstOrDefault(teamMember => teamMember.User == user.Id);
+		var teamMember = _team.FirstOrDefault(teamMember => teamMember.UserId == user.Id);
 		if (teamMember is null) return Errors.Projects.Team.NoMember;
 
 		if (!_team.Any(teamMember =>

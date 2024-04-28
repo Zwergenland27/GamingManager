@@ -1,9 +1,8 @@
 ﻿using CleanDomainValidation.Application;
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
-using GamingManager.Application.Features.Projects.DTOs;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Projects.Commands;
+using GamingManager.Contracts.Features.Projects.Commands.Create;
 using GamingManager.Domain.Games.ValueObjects;
 using GamingManager.Domain.Projects.ValueObjects;
 using GamingManager.Domain.Users.ValueObjects;
@@ -38,4 +37,4 @@ public record CreateProjectCommand(
 	GameName GameName,
 	ProjectName ProjectName,
 	ProjectStartsAtUtc StartsAtUtc,
-	Username Username) : ICommand<DetailedProjectDto>;
+	Username Username) : ICommand<CreateProjectResult>;

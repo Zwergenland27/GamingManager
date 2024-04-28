@@ -16,7 +16,7 @@ public class DeleteGameServerCommandHandler(
 		var gameServer = await gameServerRepository.GetAsync(request.GameServerName);
 		if(gameServer is null) return Errors.GameServers.ServerNameNotFound;
 
-		var project = await projectRepository.GetAsync(gameServer.Project);
+		var project = await projectRepository.GetAsync(gameServer.ProjectId);
 		if(project is null)
 		{
 			throw new InvalidOperationException("The project associated with the game server does not exist");

@@ -7,7 +7,6 @@ using GamingManager.Domain.Projects;
 using GamingManager.Domain.Projects.ValueObjects;
 using GamingManager.Domain.Servers;
 using GamingManager.Domain.Servers.ValueObjects;
-using static GamingManager.Domain.DomainErrors.Errors;
 
 namespace GamingManager.Domain.GameServers;
 
@@ -18,7 +17,7 @@ public class GameServer : AggregateRoot<GameServerId>
 		GameServerName servername,
 		GameServerAutoShutdownDelay shutdownDelay) : base(GameServerId.CreateNew())
 	{
-		Project = projectId;
+		ProjectId = projectId;
 		ServerName = servername;
 		Status = GameServerStatus.Offline;
 		ShutdownDelay = shutdownDelay;
@@ -30,9 +29,9 @@ public class GameServer : AggregateRoot<GameServerId>
 	private GameServer() : base(default!) { }
 #pragma warning restore CS8618
 
-	public ServerId? HostedOn { get; private set; }
+	public ServerId? HostedOnId { get; private set; }
 
-	public ProjectId Project { get; private init; }
+	public ProjectId ProjectId { get; private init; }
 
 	public GameServerName ServerName { get; private init; }
 
@@ -57,7 +56,7 @@ public class GameServer : AggregateRoot<GameServerId>
 
 	public void Use(Server server)
 	{
-		HostedOn = server.Id;
+		HostedOnId = server.Id;
 		Address = server.Address.Host;
 	}
 
@@ -68,20 +67,20 @@ public class GameServer : AggregateRoot<GameServerId>
 
 	public CanFail MarkForStart()
 	{
-		if (HostedOn is null) return Errors.GameServers.ServerNotHosted;
+		if (HostedOnId is null) return Errors.GameServers.ServerNotHosted;
 
 		if (Maintenance) return Errors.GameServers.NotStartable;
 		if (Status == GameServerStatus.Online) return Errors.GameServers.AlreadyOnline;
 		if (Status == GameServerStatus.Starting) return Errors.GameServers.AlreadyStarting;
 
 		Status = GameServerStatus.WaitingForHardware;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOnId, Status));
 		return CanFail.Success();
 	}
 
 	public CanFail Start()
 	{
-		if (HostedOn is null) return Errors.GameServers.ServerNotHosted;
+		if (HostedOnId is null) return Errors.GameServers.ServerNotHosted;
 
 		if (Maintenance) return Errors.GameServers.NotStartable;
 		if (Status == GameServerStatus.Online) return Errors.GameServers.AlreadyOnline;
@@ -91,7 +90,7 @@ public class GameServer : AggregateRoot<GameServerId>
 		var shutdownAtUtc = new GameServerShutdownAtUtc(DateTime.UtcNow.AddMinutes(ShutdownDelay.Minutes));
 		ScheduleShutdown(shutdownAtUtc);
 
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOnId, Status));
 		return CanFail.Success();
 	}
 
@@ -126,13 +125,13 @@ public class GameServer : AggregateRoot<GameServerId>
 	{
 		Status = GameServerStatus.Offline;
 		ShutdownAt = null;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn!, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOnId!, Status));
 	}
 
 	public void Started()
 	{
 		Status = GameServerStatus.Online;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn!, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOnId!, Status));
 	}
 
 	public CanFail Crashed(GameServerCrashedAtUtc crashedAt)
@@ -141,8 +140,8 @@ public class GameServer : AggregateRoot<GameServerId>
 
 		Status = GameServerStatus.Offline;
 		ShutdownAt = null;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn!, Status));
-		RaiseDomainEvent(new GameServerCrashedEvent(Id, Project, crashedAt));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOnId!, Status));
+		RaiseDomainEvent(new GameServerCrashedEvent(Id, ProjectId, crashedAt));
 		return CanFail.Success();
 	}
 
@@ -150,7 +149,7 @@ public class GameServer : AggregateRoot<GameServerId>
 	{
 		throw new NotImplementedException("Not working yet.");
 		Maintenance = true;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOnId, Status));
 		return CanFail.Success();
 	}
 
@@ -159,7 +158,7 @@ public class GameServer : AggregateRoot<GameServerId>
 		throw new NotImplementedException("Not working yet.");
 		if (!Maintenance) return Errors.GameServers.NoMaintenance;
 		Maintenance = false;
-		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOn, Status));
+		RaiseDomainEvent(new GameServerStatusChangedEvent(Id, HostedOnId, Status));
 		return CanFail.Success();
 	}
 }

@@ -2,8 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Users.Commands;
-using GamingManager.Contracts.Features.Users.DTOs;
+using GamingManager.Contracts.Features.Users.Commands.Register;
 using GamingManager.Domain.Users.ValueObjects;
 
 namespace GamingManager.Application.Features.Users.Commands.Register;
@@ -41,4 +40,4 @@ public record RegisterUserCommand(
 	Lastname? Lastname,
 	Username Username,
 	Email Email,
-	Password Password) : ICommand<DetailedUserDto>;
+	Password Password) : ICommand<RegisterUserResult>;

@@ -2,7 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Servers.Commands;
+using GamingManager.Contracts.Features.Servers.Commands.ReceiveHeartbeat;
 using GamingManager.Domain.Servers.ValueObjects;
 
 namespace GamingManager.Application.Features.Servers.Commands.ReceiveHeartbeat;

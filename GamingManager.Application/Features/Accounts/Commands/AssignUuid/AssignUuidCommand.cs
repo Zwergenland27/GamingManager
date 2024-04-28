@@ -2,8 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Accounts.Commands;
-using GamingManager.Contracts.Features.Accounts.DTOs;
+using GamingManager.Contracts.Features.Accounts.Commands.AssignUuid;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.Games.ValueObjects;
 
@@ -32,4 +31,4 @@ public class AssignUuidCommandBuilder : IRequestBuilder<AssignUuidParameters, As
 public record AssignUuidCommand(
 	GameName GameName,
 	AccountName AccountName,
-	Uuid Uuid) : ICommand<DetailedAccountDto>;
+	Uuid Uuid) : ICommand;

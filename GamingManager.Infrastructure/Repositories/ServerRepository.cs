@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class ServerRepository(GamingManagerContext context) : IServerRepository
+public class ServerRepository(GamingManagerDomainContext context) : IServerRepository
 {
 	public void Add(Server server)
 	{
@@ -29,12 +29,12 @@ public class ServerRepository(GamingManagerContext context) : IServerRepository
 
 	public async Task<bool> HasAnyActiveGameServersAsync(ServerId serverId)
 	{
-		return !await context.GameServers.AnyAsync(gameServer => gameServer.HostedOn == serverId && gameServer.Status != GameServerStatus.Offline);
+		return !await context.GameServers.AnyAsync(gameServer => gameServer.HostedOnId == serverId && gameServer.Status != GameServerStatus.Offline);
 	}
 
 	public async Task<bool> HostsGameServer(ServerId serverId)
 	{
-		return await context.GameServers.AnyAsync(gameServer => gameServer.HostedOn == serverId);
+		return await context.GameServers.AnyAsync(gameServer => gameServer.HostedOnId == serverId);
 	}
 
 	public async Task<bool> IsAddressUniqueAsync(Uri address)

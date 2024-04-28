@@ -15,8 +15,9 @@ public class User : AggregateRoot<UserId>
 	private string _passwordHash;
 	private string _passwordSalt;
 
-	private string? _emailVerificationToken;
-	private DateTime? _emailVerificationRequested;
+	private EmailVerificationToken? _emailVerificationToken;
+
+	private RefreshToken? _refreshToken;
 
 
 	private User(
@@ -41,17 +42,17 @@ public class User : AggregateRoot<UserId>
 	private User() : base(default!) { }
 #pragma warning restore CS8618
 
-	public Firstname? Firstname { get; set; }
+	public Firstname? Firstname { get; private set; }
 
-	public Lastname? Lastname { get; set; }
+	public Lastname? Lastname { get; private set; }
 
-	public Email Email { get; set; }
+	public Email Email { get; private set; }
 
 	public bool EmailConfirmed { get; private set; }
 
-	public Username Username { get; set; }
+	public Username Username { get; private set; }
 
-	public Role Role { get; set; }
+	public Role Role { get; private set; }
 
 	/// <summary>
 	/// Creates new <see cref="User"/> instance
@@ -77,6 +78,16 @@ public class User : AggregateRoot<UserId>
 
 		return user;
 	}
+	public void SetRefreshToken(RefreshToken refreshToken)
+	{
+		_refreshToken = refreshToken; 
+	}
+
+	public bool IsRefreshTokenValid(string token)
+	{
+		if (_refreshToken is null) return false;
+        return _refreshToken.IsValid(token);
+	}
 
 	public bool IsPasswordCorret(Password password)
 	{
@@ -94,27 +105,28 @@ public class User : AggregateRoot<UserId>
 		RaiseDomainEvent(new PasswordResettedEvent(Username, Email, newPassword));
 	}
 
-	public void RequestEmailVerification()
+	public CanFail RequestEmailVerification()
 	{
-		_emailVerificationToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)).Replace('/', 'a').Replace('?', 'q');
-		_emailVerificationRequested = DateTime.UtcNow;
+		if (EmailConfirmed) return Errors.Users.EmailAlreadyConfirmed;
+
+		_emailVerificationToken = new EmailVerificationToken();
 		RaiseDomainEvent(new EmailVerificationRequestedEvent(Username, Email, _emailVerificationToken));
+		return CanFail.Success();
 	}
 
 	public CanFail ConfirmEmail(string token)
 	{
-        if (_emailVerificationRequested is null) return Errors.Users.InvalidEmailVerification;
-		if (_emailVerificationRequested.Value.AddHours(24) < DateTime.UtcNow) return Errors.Users.InvalidEmailVerification;
-		if (_emailVerificationToken != token) return Errors.Users.InvalidEmailVerification;
+        if (_emailVerificationToken is null) return Errors.Users.InvalidEmailVerification;
+		if(!_emailVerificationToken.IsValid(token)) return Errors.Users.InvalidEmailVerification;
 
 		EmailConfirmed = true;
 		_emailVerificationToken = null;
-		_emailVerificationRequested = null;
 		return CanFail.Success();
 	}
 
 	public void ChangePassword(Password password)
 	{
+		_refreshToken = null;
 		using (var hmac = new HMACSHA256())
 		{
 			_passwordSalt = Convert.ToBase64String(hmac.Key);
@@ -158,6 +170,8 @@ public class User : AggregateRoot<UserId>
 		if (email is not null)
 		{
 			Email = email;
+			EmailConfirmed = false;
+			RequestEmailVerification();
 			hasChanges = true;
 		}
 

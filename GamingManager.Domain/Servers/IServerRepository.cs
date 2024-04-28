@@ -1,6 +1,4 @@
-﻿using GamingManager.Domain.Projects.ValueObjects;
-using GamingManager.Domain.Projects;
-using GamingManager.Domain.Servers.ValueObjects;
+﻿using GamingManager.Domain.Servers.ValueObjects;
 
 namespace GamingManager.Domain.Servers;
 

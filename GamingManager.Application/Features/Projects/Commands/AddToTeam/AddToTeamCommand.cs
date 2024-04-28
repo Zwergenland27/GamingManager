@@ -2,7 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Projects.Commands;
+using GamingManager.Contracts.Features.Projects.Commands.AddToTeam;
 using GamingManager.Domain.Projects.ValueObjects;
 using GamingManager.Domain.Users.ValueObjects;
 
@@ -31,4 +31,4 @@ public class AddToTeamCommandBuilder : IRequestBuilder<AddToTeamParameters, AddT
 public record AddToTeamCommand(
 	ProjectId ProjectId,
 	Username Username,
-	TeamRole Role) : ICommand;
+	TeamRole Role) : ICommand<AddToTeamResult>;

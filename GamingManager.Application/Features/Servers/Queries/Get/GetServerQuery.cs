@@ -2,8 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Servers.DTOs;
-using GamingManager.Contracts.Features.Servers.Queries;
+using GamingManager.Contracts.Features.Servers.Queries.Get;
 using GamingManager.Domain.Servers.ValueObjects;
 
 namespace GamingManager.Application.Features.Servers.Queries.Get;
@@ -20,4 +19,4 @@ public class GetServerQueryBuilder : IRequestBuilder<GetServerParameters, GetSer
 	}
 }
 
-public record GetServerQuery(Hostname Hostname) : IQuery<DetailedServerDto>;
+public record GetServerQuery(Hostname Hostname) : IQuery<GetServerResult>;

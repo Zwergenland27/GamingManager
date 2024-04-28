@@ -2,8 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Users.DTOs;
-using GamingManager.Contracts.Features.Users.Queries;
+using GamingManager.Contracts.Features.Users.Queries.Get;
 using GamingManager.Domain.Users.ValueObjects;
 
 namespace GamingManager.Application.Features.Users.Queries.Get;
@@ -14,10 +13,10 @@ public class GetUserQueryBuilder : IRequestBuilder<GetUserParameters, GetUserQue
 	{
 		var username = builder.ClassProperty(r => r.Username)
 			.Required(Errors.User.Get.UsernameMissing)
-			.Map(p => p.CurrentUsername, value => new Username(value));
+			.Map(p => p.Username, value => new Username(value));
 
 		return builder.Build(() => new GetUserQuery(username));
 	}
 }
 
-public record GetUserQuery(Username Username) : IQuery<DetailedUserDto>;
+public record GetUserQuery(Username Username) : IQuery<GetUserResult>;

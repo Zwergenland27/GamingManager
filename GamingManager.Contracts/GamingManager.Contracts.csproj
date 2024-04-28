@@ -11,4 +11,11 @@
     <PackageReference Include="Zwergenland.CleanDomainValidation" Version="1.0.0-alpha-hf-01" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\GameServers\Commands\BeginMaintenance\" />
+    <Folder Include="Features\GameServers\Commands\FinishMaintenance\" />
+    <Folder Include="Features\Servers\Commands\BeginMaintenance\" />
+    <Folder Include="Features\Servers\Commands\FinishMaintenance\" />
+  </ItemGroup>
+
 </Project>

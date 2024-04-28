@@ -3,7 +3,7 @@ using CleanDomainValidation.Application.Extensions;
 using CleanDomainValidation.Domain;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Users.Commands;
+using GamingManager.Contracts.Features.Users.Commands.Login;
 using GamingManager.Domain.Users.ValueObjects;
 
 namespace GamingManager.Application.Features.Users.Commands.Login;
@@ -28,7 +28,7 @@ public class LoginCommandBuilder : IRequestBuilder<LoginParameters, LoginCommand
 	}
 }
 
-public record LoginCommand : ICommand<string>
+public record LoginCommand : ICommand<Tuple<string, RefreshToken>>
 {
 	private LoginCommand(Username? username, Email? email, Password password)
 	{

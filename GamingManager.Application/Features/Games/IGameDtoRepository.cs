@@ -1,12 +1,13 @@
-﻿using GamingManager.Contracts.Features.Games.DTOs;
+﻿using GamingManager.Contracts.Features.Games.Queries;
+using GamingManager.Contracts.Features.Games.Queries.Get;
 using GamingManager.Domain.Games.ValueObjects;
 
 namespace GamingManager.Application.Features.Games;
 
 public interface IGameDtoRepository
 {
-	IAsyncEnumerable<ShortenedGameDto> GetAllAsync();
+	IAsyncEnumerable<GetAllGamesResult> GetAllAsync();
 
-	Task<DetailedGameDto?> GetDetailedAsync(GameName gameName);
-	Task<GameId?> GetIdAsync(GameName gameName);
+	Task<GetGameResult?> GetAsync(GameName gameName);
+	Task<Guid?> GetIdAsync(GameName gameName);
 }

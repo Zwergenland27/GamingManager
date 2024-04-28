@@ -16,7 +16,7 @@ public class LeaveCommandHandler(
 		var project = await projectRepository.GetAsync(request.ProjectId);
 		if (project is null) return Errors.Projects.IdNotFound;
 
-		var account = await accountRepository.GetAsync(project.Game, request.Uuid);
+		var account = await accountRepository.GetAsync(project.GameId, request.Uuid);
 		if (account is null) return Errors.Accounts.IdNotFound;
 
 		var result = project.Leave(account, request.LeaveTimeUtc);

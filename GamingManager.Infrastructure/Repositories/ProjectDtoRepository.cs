@@ -1,100 +1,74 @@
-﻿using GamingManager.Application.Features.Accounts;
-using GamingManager.Application.Features.Games;
-using GamingManager.Application.Features.Projects;
-using GamingManager.Application.Features.Projects.DTOs;
-using GamingManager.Application.Features.Users;
-using GamingManager.Contracts.Features.GameServers.DTOs;
+﻿using GamingManager.Application.Features.Projects;
+using GamingManager.Contracts.Features.Projects;
+using GamingManager.Contracts.Features.Projects.Queries.Get;
+using GamingManager.Contracts.Features.Projects.Queries.GetAll;
 using GamingManager.Domain.Projects.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-internal class ProjectDtoRepository(GamingManagerContext context) : IProjectDtoRepository
+public class ProjectDtoRepository(GamingManagerReadContext context) : IProjectDtoRepository
 {
-	public IAsyncEnumerable<ShortenedProjectDto> GetAllAsync()
+	public IAsyncEnumerable<GetAllProjectsResult> GetAllAsync()
 	{
 		return context.Projects
-			.AsNoTracking()
-			.IgnoreAutoIncludes()
-			.Join(context.Games.AsNoTracking(),
-				project => project.Game,
-				game => game.Id,
-				(project, game) => new ShortenedProjectDto(
-					project.Id.Value.ToString(),
-					project.Name.Value,
-					game.ToDto()))
+			.Select(project => new GetAllProjectsResult(
+				project.Id.ToString(),
+				project.Name))
 			.AsAsyncEnumerable();
 	}
 
-	public async Task<DetailedProjectDto?> GetDetailedAsync(ProjectId projectId)
+	public async Task<GetProjectResult?> GetAsync(ProjectId projectId)
 	{
-		var project = await context.Projects
-			.AsNoTracking()
-			.Where(project => project.Id == projectId)
-			.Join(context.Games.AsNoTracking(),
-				project => project.Game,
-				game => game.Id,
-				(project, game) => new {
-					project.Id,
-					project.Name,
-					Game = game.ToDto(),
-					project.Start,
-					project.End,
-					Members = project.Team,
-					project.Participants
-				})
-			.Join(context.GameServers.AsNoTracking(),
-				prevJoin => prevJoin.Id,
-				gameServer => gameServer.Project,
-				(prevJoin, gameServer) => new
-				{
-					prevJoin.Id,
-					prevJoin.Name,
-					prevJoin.Game,
-					prevJoin.Start,
-					prevJoin.End,
-					prevJoin.Members,
-					prevJoin.Participants,
-					GameServer = ReferenceEquals(gameServer, null) ? null : new ShortenedGameServerForProjectDto(
-						gameServer.Id.Value.ToString(),
-						gameServer.ServerName.Value)
-				})
-			.FirstOrDefaultAsync();
-
-		if (project is null) return null;
-
-		var members = project.Members
-			.Join(context.Users.AsNoTracking(),
-				member => member.User,
-				user => user.Id,
-				(member, user) => new DetailedMemberDto(
-					member.Id.Value.ToString(),
-					member.Role.ToString(),
-					member.Since.Value,
-					user.ToDto()))
-			.ToList();
-
-		var participants = project.Participants
-			.Join(context.Accounts.AsNoTracking(),
-				participant => participant.Account,
-				account => account.Id,
-				(participant, account) => new DetailedParticipantDto(
-					participant.Id.Value.ToString(),
-					account.ToDto(),
-					participant.Since.Value,
+		return await context.Projects
+			.Include(project => project.Game)
+			.Include(project => project.Server)
+			.Include(project => project.Participants)
+				.ThenInclude(participant => participant.Bans)
+			.Include(project => project.Participants)
+				.ThenInclude(participant => participant.Account)
+			.Include(project => project.TeamMembers)
+				.ThenInclude(teamMember => teamMember.User)
+			.Where(project => project.Id == projectId.Value)
+			.Select(project => new GetProjectResult(
+				project.Id.ToString(),
+				project.Name,
+				new GetProjectGameResult(
+					project.Game.Id.ToString(),
+					project.Game.Name),
+				ReferenceEquals(project.Server, null) ? null : new GetProjectGameServerResult(
+					project.Server.Id.ToString(),
+					project.Server.ServerName,
+					project.Server.Status.ToString()
+					),
+				project.Participants.Select(participant => new GetProjectParticipantsResult(
+					participant.Id.ToString(),
+					new GetProjectParticipantAccountResult(
+						participant.Account.Id.ToString(),
+						participant.Account.Name
+						),
+					participant.Since,
 					participant.Online,
-					participant.PlayTime))
-			.ToList();
-
-		return new DetailedProjectDto(
-			project.Id.Value.ToString(),
-			project.Name.Value,
-			project.Game,
-			project.GameServer,
-			project.Start.Value,
-			project.End?.Value,
-			members,
-			participants);
-
+					participant.PlayTime,
+					participant.Bans.Select(ban => new BanResult(
+						ban.Id.ToString(),
+						ban.Reason,
+						ban.BannedAtUtc,
+						ban.Duration
+						))
+					.ToList()
+					))
+				.ToList(),
+				project.TeamMembers.Select(teamMember => new GetProjectTeamMemberResult(
+					teamMember.Id.ToString(),
+					teamMember.Role.ToString(),
+					teamMember.TeamMemberSince,
+					new GetProjectTeamMemberUserResult(
+						teamMember.User.Id.ToString(),
+						teamMember.User.Username
+						)))
+				.ToList()
+				))
+			.FirstOrDefaultAsync();
 	}
 }

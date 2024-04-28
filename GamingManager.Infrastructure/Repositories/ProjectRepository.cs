@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class ProjectRepository(GamingManagerContext context) : IProjectRepository
+public class ProjectRepository(GamingManagerDomainContext context) : IProjectRepository
 {
 	public void Add(Project project)
 	{

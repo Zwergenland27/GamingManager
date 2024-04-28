@@ -17,7 +17,7 @@ public class Account : AggregateRoot<AccountId>
 		Uuid? uuid,
 		AccountName name) : base(new AccountId(Guid.NewGuid()))
 	{
-		Game = gameId;
+		GameId = gameId;
 		Uuid = uuid;
 		Name = name;
 	}
@@ -25,11 +25,11 @@ public class Account : AggregateRoot<AccountId>
 	private Account() : base(default!) { }
 #pragma warning restore CS8618
 
-	public UserId? User { get; private set; }
-	public GameId Game { get; private init; }
+	public UserId? UserId { get; private set; }
+	public GameId GameId { get; private init; }
 	public Uuid? Uuid { get; private set; }
 	public AccountName Name { get; internal set; }
-	public bool IsConfirmed => User is not null && Uuid is not null;
+	public bool IsConfirmed => UserId is not null && Uuid is not null;
 
 	public static CanFail<Account> Create(Game game, Uuid uuid, AccountName name)
 	{
@@ -49,8 +49,8 @@ public class Account : AggregateRoot<AccountId>
 
 	public CanFail AssignUser(User user)
 	{
-		if (User is not null) return Errors.Accounts.User.AlreadyAssigned;
-		User = user.Id;
+		if (UserId is not null) return Errors.Accounts.User.AlreadyAssigned;
+		UserId = user.Id;
 		RaiseDomainEvent(new AccountUserAssignedEvent(Id, user.Id));
 		return CanFail.Success();
 	}
@@ -64,7 +64,7 @@ public class Account : AggregateRoot<AccountId>
 
 	public void ForceReAssignUser(User user)
 	{
-		User = user.Id;
+		UserId = user.Id;
 		RaiseDomainEvent(new AccountUserAssignedEvent(Id, user.Id));
 	}
 }

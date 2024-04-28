@@ -2,7 +2,8 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Projects.Commands;
+using GamingManager.Contracts.Features.Projects;
+using GamingManager.Contracts.Features.Projects.Commands.Ban;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.Projects.ValueObjects;
 
@@ -36,4 +37,4 @@ public record BanAccountCommand(
 	ProjectId ProjectId,
 	AccountId AccountId,
 	Reason Reason,
-	TimeSpan? Duration) : ICommand;
+	TimeSpan? Duration) : ICommand<BanResult>;

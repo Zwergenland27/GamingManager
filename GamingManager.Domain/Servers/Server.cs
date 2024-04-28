@@ -1,7 +1,6 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Domain.Abstractions;
 using GamingManager.Domain.DomainErrors;
-using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Servers.Events;
 using GamingManager.Domain.Servers.ValueObjects;
 

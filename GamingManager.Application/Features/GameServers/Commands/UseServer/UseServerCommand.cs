@@ -2,7 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.GameServers.Commands;
+using GamingManager.Contracts.Features.GameServers.Commands.UseServer;
 using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Servers.ValueObjects;
 
@@ -24,4 +24,4 @@ public class UseServerCommandBuilder : IRequestBuilder<UseServerParameters, UseS
 	}
 }
 
-public record UseServerCommand(GameServerName Name, Hostname Hostname) : ICommand;
+public record UseServerCommand(GameServerName Name, Hostname Hostname) : ICommand<UseServerResult>;

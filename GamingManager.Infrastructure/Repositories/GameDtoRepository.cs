@@ -1,49 +1,47 @@
 ﻿using GamingManager.Application.Features.Games;
-using GamingManager.Application.Features.Projects.DTOs;
-using GamingManager.Contracts.Features.Games.DTOs;
-using GamingManager.Contracts.Features.Projects.DTOs;
+using GamingManager.Contracts.Features.Games.Queries;
+using GamingManager.Contracts.Features.Games.Queries.Get;
 using GamingManager.Domain.Games.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class GameDtoRepository(GamingManagerContext context) : IGameDtoRepository
+public class GameDtoRepository(GamingManagerReadContext context) : IGameDtoRepository
 {
-	public IAsyncEnumerable<ShortenedGameDto> GetAllAsync()
+	public IAsyncEnumerable<GetAllGamesResult> GetAllAsync()
 	{
-		return context.GetGamesAsync(game => true);
+		return context.Games
+			.Select(game => new GetAllGamesResult(
+				game.Id.ToString(),
+				game.Name))
+			.AsAsyncEnumerable();
 	}
 
-	public async Task<DetailedGameDto?> GetDetailedAsync(GameName gameName)
-	{
-		//TODO: Refactor for better performance
-		var game = await context.Games
-			.AsNoTracking()
-			.FirstOrDefaultAsync(game => game.Name == gameName);
-
-		if(game is null) return null;
-
-		var accounts = await context.GetAccountsAsync(account => account.Game == game.Id).ToListAsync();
-
-		var projects = await context.Projects
-			.AsNoTracking()
-			.Where(project => project.Game == game.Id)
-			.Select(project => new ShortenedProjectForGameDto(
-				project.Id.Value.ToString(),
-				project.Name.Value))
-			.ToListAsync();
-		return new DetailedGameDto(
-			game.Id.Value.ToString(),
-			game.Name.Value,
-			accounts,
-			projects);
-	}
-
-	public async Task<GameId?> GetIdAsync(GameName gameName)
+	public async Task<GetGameResult?> GetAsync(GameName gameName)
 	{
 		return await context.Games
-			.AsNoTracking()
-			.Where(game => game.Name == gameName)
+			.Include(game => game.Accounts)
+			.Include(game => game.Projects)
+			.Where(game => game.Name == gameName.Value)
+			.Select(game => new GetGameResult(
+				game.Id.ToString(),
+				game.Name,
+				game.Accounts.Select(account => new GetGameAccountsResult(
+					account.Id.ToString(),
+					account.Name))
+				.ToList(),
+				game.Projects.Select(project => new GetGameProjectsResult(
+					project.Id.ToString(),
+					project.Name))
+				.ToList()))
+			.FirstOrDefaultAsync();
+	}
+
+	public async Task<Guid?> GetIdAsync(GameName gameName)
+	{
+		return await context.Games
+			.Where(game => game.Name == gameName.Value)
 			.Select(game => game.Id)
 			.FirstOrDefaultAsync();
 	}

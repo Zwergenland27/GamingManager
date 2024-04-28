@@ -2,7 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Projects.Commands;
+using GamingManager.Contracts.Features.Projects.Commands.RescheduleStart;
 using GamingManager.Domain.Projects.ValueObjects;
 
 namespace GamingManager.Application.Features.Projects.Commands.RescheduleStart;

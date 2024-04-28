@@ -12,8 +12,8 @@ public class Session : Entity<SessionId>
 		ParticipantId participantId,
 		SessionStartsAtUtc start) : base(SessionId.CreateNew())
 	{
-		Project = projectId;
-		Participant = participantId;
+		ProjectId = projectId;
+		ParticipantId = participantId;
 		Start = start;
 	}
 
@@ -21,9 +21,9 @@ public class Session : Entity<SessionId>
 	private Session() : base(default!) { }
 #pragma warning restore
 	
-	public ProjectId Project { get; private init; }
+	public ProjectId ProjectId { get; private init; }
 	
-	public ParticipantId Participant { get; private init; }
+	public ParticipantId ParticipantId { get; private init; }
 
 	public SessionStartsAtUtc Start { get; private init; }
 

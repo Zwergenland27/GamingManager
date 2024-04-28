@@ -12,7 +12,7 @@ public class Ban : Entity<BanId>
 		DateTime bannedAtUtc,
 		TimeSpan? duration) : base(BanId.CreateNew())
 	{
-		Participant = participantId;
+		ParticipantId = participantId;
 		Reason = reason;
 		BannedAtUtc = bannedAtUtc;
 		Duration = duration;
@@ -22,9 +22,9 @@ public class Ban : Entity<BanId>
 	private Ban() : base(default!) { }
 #pragma warning restore
 
-	public ProjectId Project { get; private init; }
+	public ProjectId ProjectId { get; private init; }
 
-	public ParticipantId Participant { get; private init; }
+	public ParticipantId ParticipantId { get; private init; }
 
 	public Reason Reason { get; private init; }
 

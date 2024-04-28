@@ -1,9 +1,8 @@
 ﻿using CleanDomainValidation.Application;
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
-using GamingManager.Application.Features.Projects.DTOs;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Projects.Queries;
+using GamingManager.Contracts.Features.Projects.Queries.Get;
 using GamingManager.Domain.Projects.ValueObjects;
 
 namespace GamingManager.Application.Features.Projects.Queries.Get;
@@ -20,4 +19,4 @@ public class GetProjectQueryBuilder : IRequestBuilder<GetProjectParameters, GetP
 	}
 }
 
-public record GetProjectQuery(ProjectId ProjectId) : IQuery<DetailedProjectDto>;
+public record GetProjectQuery(ProjectId ProjectId) : IQuery<GetProjectResult>;

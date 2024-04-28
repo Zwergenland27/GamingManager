@@ -1,6 +1,5 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Application.Abstractions;
-using GamingManager.Contracts.Features.Accounts.DTOs;
 using GamingManager.Domain.Accounts;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.Games;
@@ -11,11 +10,10 @@ namespace GamingManager.Application.Features.Accounts.Commands.AssignUser;
 public class AssignUserCommandHandler(
 	IUnitOfWork unitOfWork,
 	IAccountRepository accountRepository,
-	IAccountDtoRepository accountDtoRepository,
 	IGameRepository gameRepository,
-	IUserRepository userRepository) : ICommandHandler<AssignUserCommand, DetailedAccountDto>
+	IUserRepository userRepository) : ICommandHandler<AssignUserCommand>
 {
-	public async Task<CanFail<DetailedAccountDto>> Handle(AssignUserCommand request, CancellationToken cancellationToken)
+	public async Task<CanFail> Handle(AssignUserCommand request, CancellationToken cancellationToken)
 	{
 		var game = await gameRepository.GetAsync(request.GameName);
 		if (game is null) return Errors.Games.NameNotFound;
@@ -31,6 +29,6 @@ public class AssignUserCommandHandler(
 
 		await unitOfWork.SaveAsync(cancellationToken);
 
-		return (await accountDtoRepository.GetDetailedAsync(account.Id))!;
+		return CanFail.Success();
 	}
 }

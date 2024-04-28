@@ -1,12 +1,10 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Domain.Abstractions;
-using GamingManager.Domain.Accounts;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Projects.Events;
 using GamingManager.Domain.Projects.ValueObjects;
-using System.Net.Http.Headers;
 
 namespace GamingManager.Domain.Projects.Entities;
 
@@ -21,8 +19,8 @@ public class Participant : Entity<ParticipantId>
         ProjectId projectId,
         AccountId playerId) : base(ParticipantId.CreateNew())
     {
-        Project = projectId;
-		Account = playerId;
+        ProjectId = projectId;
+		AccountId = playerId;
         Since = new ParticipatesSinceUtc(DateTime.UtcNow);
         Online = false;
         _playTime = new TimeSpan(0, 0, 0);
@@ -32,9 +30,9 @@ public class Participant : Entity<ParticipantId>
     private Participant() : base(default!) { }
 #pragma warning restore
 
-    public ProjectId Project { get; }
+    public ProjectId ProjectId { get; }
 
-    public AccountId Account { get; }
+    public AccountId AccountId { get; }
 
     public ParticipatesSinceUtc Since { get; }
 
@@ -67,10 +65,10 @@ public class Participant : Entity<ParticipantId>
     {
         if(IsCurrentlyBanned) return Errors.Projects.Participants.AlreadyBanned;
 
-        var ban = Ban.CreatePermanent(Project, Id, reason, DateTime.UtcNow);
+        var ban = Ban.CreatePermanent(ProjectId, Id, reason, DateTime.UtcNow);
         _bans.Add(ban);
 
-        RaiseDomainEvent(new ParticipantBannedEvent(Project, Id, ban));
+        RaiseDomainEvent(new ParticipantBannedEvent(ProjectId, Id, ban));
         return ban;
 	}
 
@@ -78,10 +76,10 @@ public class Participant : Entity<ParticipantId>
 	{
 		if (IsCurrentlyBanned) return Errors.Projects.Participants.AlreadyBanned;
 
-		var ban = Ban.CreateTemporary(Project, Id, reason, DateTime.UtcNow, duration);
+		var ban = Ban.CreateTemporary(ProjectId, Id, reason, DateTime.UtcNow, duration);
 		_bans.Add(ban);
 
-		RaiseDomainEvent(new ParticipantBannedEvent(Project, Id, ban));
+		RaiseDomainEvent(new ParticipantBannedEvent(ProjectId, Id, ban));
 		return ban;
 	}
 
@@ -95,7 +93,7 @@ public class Participant : Entity<ParticipantId>
 
         _bans.Remove(lastBan);
 
-        RaiseDomainEvent(new ParticipantPardonnedEvent(Project, Id));
+        RaiseDomainEvent(new ParticipantPardonnedEvent(ProjectId, Id));
         return CanFail.Success();
     }
 
@@ -110,10 +108,10 @@ public class Participant : Entity<ParticipantId>
             else if (joinTime.Value >= lastSession.End.EndTime) return Errors.Projects.Participants.JoinBeforePreviousSession;
 		}
 
-        var currentSession = new Session(Project, Id, joinTime);
+        var currentSession = new Session(ProjectId, Id, joinTime);
         _sessions.Add(currentSession);
         Online = true;
-        RaiseDomainEvent(new ParticipantJoinedEvent(Project, Id, gameServerId, joinTime));
+        RaiseDomainEvent(new ParticipantJoinedEvent(ProjectId, Id, gameServerId, joinTime));
         return CanFail.Success();
 
     }
@@ -136,7 +134,7 @@ public class Participant : Entity<ParticipantId>
 		lastSession.Stop(leaveTime, irregular);
         Online = false;
         _playTime.Add(lastSession.Duration);
-        RaiseDomainEvent(new ParticipantLeftEvent(Project, Id, gameServerId, leaveTime, irregular));
+        RaiseDomainEvent(new ParticipantLeftEvent(ProjectId, Id, gameServerId, leaveTime, irregular));
 		return CanFail.Success();
 	}
 }

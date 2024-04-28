@@ -2,8 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Games.DTOs;
-using GamingManager.Contracts.Features.Games.Queries;
+using GamingManager.Contracts.Features.Games.Queries.Get;
 using GamingManager.Domain.Games.ValueObjects;
 
 namespace GamingManager.Application.Features.Games.Queries.Get;
@@ -20,4 +19,4 @@ public class GetGameQueryBuilder : IRequestBuilder<GetGameParameters, GetGameQue
 	}
 }
 
-public record GetGameQuery(GameName Name) : IQuery<DetailedGameDto>;
+public record GetGameQuery(GameName Name) : IQuery<GetGameResult>;

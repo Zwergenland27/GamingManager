@@ -1,68 +1,54 @@
-﻿using GamingManager.Application.Features.Games;
-using GamingManager.Application.Features.Projects.DTOs;
-using GamingManager.Application.Features.Users;
-using GamingManager.Contracts.Features.Accounts.DTOs;
-using GamingManager.Contracts.Features.Users.DTOs;
+﻿using GamingManager.Application.Features.Users;
+using GamingManager.Contracts.Features.Users.Queries.Get;
+using GamingManager.Contracts.Features.Users.Queries.GetAll;
 using GamingManager.Domain.Users.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace GamingManager.Infrastructure.Repositories;
 
-public class UserDtoRepository(GamingManagerContext context) : IUserDtoRepository
+public class UserDtoRepository(GamingManagerReadContext context) : IUserDtoRepository
 {
-	public IAsyncEnumerable<ShortenedUserDto> GetAllAsync()
+	public IAsyncEnumerable<GetAllUsersResult> GetAllAsync()
 	{
-		return context.GetUsersAsync(user => true);
+		return context.Users
+			.Select(user => new GetAllUsersResult(
+				user.Id.ToString(),
+				user.Username,
+				user.Email,
+				user.Role.ToString(),
+				user.Firstname,
+				user.Lastname,
+				user.EmailConfirmed))
+			.AsAsyncEnumerable();
 	}
 
-	public async Task<DetailedUserDto?> GetDetailedAsync(Username username)
+	public Task<GetUserResult?> GetAsync(Username username)
 	{
-		var user = await context.Users.AsNoTracking()
-			.GroupJoin(context.Accounts.AsNoTracking(),
-				user => user.Id,
-				account => account.User,
-				(user, accounts) => new
-				{
-					user.Id,
-					user.Username,
-					user.Email,
-					user.Firstname,
-					user.Lastname,
-					user.Role,
-					Accounts = accounts
-				})
-			.FirstOrDefaultAsync(user => user.Username == username);
-
-		if (user is null) return null;
-
-		var accounts = user.Accounts
-			.Join(context.Games.AsNoTracking(),
-				account => account.Game,
-				game => game.Id,
-				(account, game) => new ShortenedAccountDto(
-					account.Id.Value.ToString(),
-					account.Name.ToString()))
-			.ToList();
-
-		var memberOf = await context.Projects.AsNoTracking()
-			.Where(project => project.Team.Any(user => user.Id == user.Id))
-			.Join(context.Games.AsNoTracking(),
-				project => project.Game,
-				game => game.Id,
-				(project, game) => new ShortenedProjectDto(
-					project.Id.Value.ToString(),
-					project.Name.Value,
-					game.ToDto()))
-			.ToListAsync();
-
-		return new DetailedUserDto(
-			user.Id.Value.ToString(),
-			user.Firstname?.Value,
-			user.Lastname?.Value,
-			user.Email.Value,
-			user.Username.Value,
-			user.Role.ToString(),
-			accounts,
-			memberOf);
+		return context.Users
+			.Include(user => user.Accounts)
+				.ThenInclude(account => account.Game)
+			.Include(user => user.MemberOfTeam)
+				.ThenInclude(member => member.Project)
+			.Where(user => user.Username == username.Value)
+			.Select(user => new GetUserResult(
+				user.Id.ToString(),
+				user.Username,
+				user.Email,
+				user.Role.ToString(),
+				user.Firstname,
+				user.Lastname,
+				user.EmailConfirmed,
+				user.Accounts.Select(account => new GetUserAccountResult(
+					account.Id.ToString(),
+					account.Name,
+					new GetUserAccountGameResult(
+						account.Game.Id.ToString(),
+						account.Game.Name)))
+				.ToList(),
+				user.MemberOfTeam.Select(teamMember => new GetUserProjectsResult(
+					teamMember.Project.Id.ToString(),
+					teamMember.Project.Name))
+				.ToList()))
+			.FirstOrDefaultAsync();
 	}
 }

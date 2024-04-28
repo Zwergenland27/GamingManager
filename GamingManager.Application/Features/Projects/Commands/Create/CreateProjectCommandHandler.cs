@@ -1,6 +1,6 @@
 ﻿using CleanDomainValidation.Domain;
 using GamingManager.Application.Abstractions;
-using GamingManager.Application.Features.Projects.DTOs;
+using GamingManager.Contracts.Features.Projects.Commands.Create;
 using GamingManager.Domain.DomainErrors;
 using GamingManager.Domain.Games;
 using GamingManager.Domain.Projects;
@@ -13,15 +13,15 @@ public class CreateProjectCommandHandler(
 	IProjectRepository projectRepository,
 	IProjectDtoRepository projectDtoRepository,
 	IGameRepository gameRepository,
-	IUserRepository userRepository) : ICommandHandler<CreateProjectCommand, DetailedProjectDto>
+	IUserRepository userRepository) : ICommandHandler<CreateProjectCommand, CreateProjectResult>
 {
-	public async Task<CanFail<DetailedProjectDto>> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+	public async Task<CanFail<CreateProjectResult>> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
 	{
 		var game = await gameRepository.GetAsync(request.GameName);
-		if(game is null) return Errors.Games.NameNotFound;
+		if (game is null) return Errors.Games.NameNotFound;
 
 		var user = await userRepository.GetAsync(request.Username);
-		if(user is null) return Errors.Users.IdNotFound;
+		if (user is null) return Errors.Users.IdNotFound;
 
 
 		var projectResult = Project.Create(request.ProjectName, game, request.StartsAtUtc, user);
@@ -29,8 +29,24 @@ public class CreateProjectCommandHandler(
 
 		projectRepository.Add(projectResult.Value);
 
+		var teamMember = projectResult.Value.Team.First(teamMember => teamMember.UserId == user.Id);
+
 		await unitOfWork.SaveAsync(cancellationToken);
 
-		return (await projectDtoRepository.GetDetailedAsync(projectResult.Value.Id))!;
+		return new CreateProjectResult(
+			Id: projectResult.Value.Id.Value.ToString(),
+			Name: projectResult.Value.Name.Value,
+			Game: new CreateProjectGameResult(
+				Id: game.Id.Value.ToString(),
+				Name: game.Name.Value),
+			Team: [
+				new CreateProjectTeamMemberResult(
+					Id: teamMember.Id.Value.ToString(),
+					Role: teamMember.Role.ToString(),
+					SinceUtc: teamMember.Since.Value,
+					User: new CreateTeamMemberUserResult(
+						Id: user.Id.Value.ToString(),
+						Username: user.Username.Value))
+				]);
 	}
 }

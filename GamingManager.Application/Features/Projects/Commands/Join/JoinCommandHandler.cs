@@ -18,7 +18,7 @@ public class JoinCommandHandler(
 
 		//TODO: check that the gameServer of the project and the server are not in maintenance mode!
 
-		var account = await accountRepository.GetAsync(project.Game, request.Uuid);
+		var account = await accountRepository.GetAsync(project.GameId, request.Uuid);
 		if (account is null) return Errors.Accounts.IdNotFound;
 
 		var result = project.Join(account, request.JoinTimeUtc);

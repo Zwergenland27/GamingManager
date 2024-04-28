@@ -1,6 +1,6 @@
 ﻿using GamingManager.Application.Abstractions;
-using GamingManager.Application.Features.Projects.DTOs;
+using GamingManager.Contracts.Features.Projects.Queries.GetAll;
 
 namespace GamingManager.Application.Features.Projects.Queries.GetAll;
 
-public record GetAllProjectsQuery : IQuery<IEnumerable<ShortenedProjectDto>>;
+public record GetAllProjectsQuery : IQuery<IEnumerable<GetAllProjectsResult>>;

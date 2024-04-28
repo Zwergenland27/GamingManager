@@ -1,5 +1,4 @@
 ﻿using CleanDomainValidation.Domain;
-using GamingManager.Domain.Abstractions;
 using GamingManager.Domain.DomainErrors;
 
 namespace GamingManager.Domain.Users.ValueObjects;

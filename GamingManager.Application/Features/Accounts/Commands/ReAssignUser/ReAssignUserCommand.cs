@@ -2,8 +2,7 @@
 using CleanDomainValidation.Application.Extensions;
 using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
-using GamingManager.Contracts.Features.Accounts.Commands;
-using GamingManager.Contracts.Features.Accounts.DTOs;
+using GamingManager.Contracts.Features.Accounts.Commands.ReAssignUser;
 using GamingManager.Domain.Accounts.ValueObjects;
 using GamingManager.Domain.Games.ValueObjects;
 using GamingManager.Domain.Users.ValueObjects;
@@ -33,4 +32,4 @@ public class ReAssignUserCommandBuilder : IRequestBuilder<ReAssignUserParameters
 public record ReAssignUserCommand(
 	GameName GameName,
 	AccountName AccountName,
-	Username Username) : ICommand<DetailedAccountDto>;
+	Username Username) : ICommand;

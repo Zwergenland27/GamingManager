@@ -17,9 +17,9 @@ public class StartGameServerCommandHandler(
 		var gameServer = await gameServerRepository.GetAsync(request.GameServerName);
 		if (gameServer is null) return Errors.GameServers.ServerNameNotFound;
 
-		if (gameServer.HostedOn is null) return Errors.GameServers.ServerNotHosted;
+		if (gameServer.HostedOnId is null) return Errors.GameServers.ServerNotHosted;
 
-		var server = await serverRepository.GetAsync(gameServer.HostedOn);
+		var server = await serverRepository.GetAsync(gameServer.HostedOnId);
 		if (server is null) return Errors.Servers.IdNotFound;
 
 		if (server.Status == ServerStatus.Online)
