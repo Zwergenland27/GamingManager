@@ -189,9 +189,9 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
     private static void ConfigureTeamMembersTable(EntityTypeBuilder<Project> builder)
     {
-        builder.OwnsMany(project => project.Team, teamMemberBuilder =>
+        builder.OwnsMany(project => project.Members, teamMemberBuilder =>
         {
-            teamMemberBuilder.ToTable("TeamMembers");
+            teamMemberBuilder.ToTable("Members");
 
             teamMemberBuilder.WithOwner().HasForeignKey(teamMember => teamMember.ProjectId);
 
@@ -205,7 +205,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
             teamMemberBuilder.Property(teamMember => teamMember.Id)
                 .HasConversion(
                     teamMemberId => teamMemberId.Value,
-                    value => new TeamMemberId(value));
+                    value => new MemberId(value));
 
             teamMemberBuilder.Property(teamMember => teamMember.UserId)
                 .HasConversion(
@@ -220,7 +220,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
                     value => new TeamMemberSinceUtc(value));
         });
 
-        builder.Metadata.FindNavigation(nameof(Project.Team))!
+        builder.Metadata.FindNavigation(nameof(Project.Members))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
     }
 }

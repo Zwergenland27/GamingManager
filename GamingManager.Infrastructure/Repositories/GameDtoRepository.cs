@@ -1,9 +1,8 @@
 ﻿using GamingManager.Application.Features.Games;
-using GamingManager.Contracts.Features.Games.Queries;
 using GamingManager.Contracts.Features.Games.Queries.Get;
+using GamingManager.Contracts.Features.Games.Queries.GetAll;
 using GamingManager.Domain.Games.ValueObjects;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
 
 namespace GamingManager.Infrastructure.Repositories;
 
@@ -27,6 +26,7 @@ public class GameDtoRepository(GamingManagerReadContext context) : IGameDtoRepos
 			.Select(game => new GetGameResult(
 				game.Id.ToString(),
 				game.Name,
+				game.VerificationRequired,
 				game.Accounts.Select(account => new GetGameAccountsResult(
 					account.Id.ToString(),
 					account.Name))

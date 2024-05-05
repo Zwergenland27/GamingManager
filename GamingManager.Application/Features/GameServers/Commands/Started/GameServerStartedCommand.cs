@@ -11,12 +11,12 @@ public class GameServerStartedCommandBuilder : IRequestBuilder<GameServerStarted
 {
 	public ValidatedRequiredProperty<GameServerStartedCommand> Configure(RequiredPropertyBuilder<GameServerStartedParameters, GameServerStartedCommand> builder)
 	{
-		var id = builder.ClassProperty(r => r.GameServerName)
+		var id = builder.ClassProperty(r => r.Name)
 			.Required(Errors.GameServer.Started.NameMissing)
-			.Map(p => p.GameServerName, value => new GameServerName(value));
+			.Map(p => p.Name, value => new GameServerName(value));
 
 		return builder.Build(() => new GameServerStartedCommand(id));
 	}
 }
 
-public record GameServerStartedCommand(GameServerName GameServerName) : ICommand;
+public record GameServerStartedCommand(GameServerName Name) : ICommand;

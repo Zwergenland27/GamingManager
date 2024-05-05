@@ -14,7 +14,7 @@ public class GameServerCrashedParameters : IParameters
     /// </summary>
     /// <example>Minecraft-04</example>
     [JsonIgnore]
-    public string? GameServerName { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// The time the server crashed

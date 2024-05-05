@@ -9,6 +9,12 @@ namespace GamingManager.Contracts.Features.Projects.Commands.Join;
 /// </summary>
 public class JoinParameters : IParameters
 {
+    /// <summary>
+    /// Id of the gameServer that sent this request
+    /// </summary>
+    [JsonIgnore]
+    public string? GameServerId { get; set; }
+
     ///<summary>
     /// Unique id of the project
     /// </summary>

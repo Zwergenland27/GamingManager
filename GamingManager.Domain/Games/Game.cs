@@ -13,9 +13,10 @@ namespace GamingManager.Domain.Games;
 public class Game : AggregateRoot<GameId>
 {
 	private Game(
-		GameName name) : base(GameId.CreateNew())
+		GameName name, bool verificationRequired) : base(GameId.CreateNew())
 	{
 		Name = name;
+		VerificationRequired = verificationRequired;
 	}
 
 #pragma warning disable CS8618
@@ -24,17 +25,18 @@ public class Game : AggregateRoot<GameId>
 
 	public GameName Name { get; set; }
 
+	public bool VerificationRequired { get; private set; }
+
 	/// <summary>
 	/// Creates new <see cref="Game"/> instance
 	/// </summary>
-	public static CanFail<Game> Create(GameName name)
+	public static CanFail<Game> Create(GameName name, bool verificationRequired)
 	{
-		return new Game(name);
+		return new Game(name, verificationRequired);
 	}
 
 	public CanFail<Project> CreateProject(ProjectName name, ProjectStartsAtUtc start, User owner)
 	{
 		return Project.Create(name, this, start, owner);
 	}
-
 }

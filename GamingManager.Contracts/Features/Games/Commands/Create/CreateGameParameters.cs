@@ -14,4 +14,13 @@ public record CreateGameParameters : IParameters
     /// <example>Minecraft</example>
     [Required]
     public string? Name { get; set; }
+
+	/// <summary>
+	/// True, if the player must authorize when creating its account
+	/// </summary>
+	/// <remarks>
+	/// This should only be visible to admins
+	/// </remarks>
+	[Required]
+    public bool? Verificationequired { get; set; }
 }

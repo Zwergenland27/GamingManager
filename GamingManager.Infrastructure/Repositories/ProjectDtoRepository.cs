@@ -3,15 +3,17 @@ using GamingManager.Contracts.Features.Projects;
 using GamingManager.Contracts.Features.Projects.Queries.Get;
 using GamingManager.Contracts.Features.Projects.Queries.GetAll;
 using GamingManager.Domain.Projects.ValueObjects;
+using GamingManager.Domain.Users.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace GamingManager.Infrastructure.Repositories;
 
 public class ProjectDtoRepository(GamingManagerReadContext context) : IProjectDtoRepository
 {
-	public IAsyncEnumerable<GetAllProjectsResult> GetAllAsync()
+	public IAsyncEnumerable<GetAllProjectsResult> GetAllAsync(UserId requesterId)
 	{
 		return context.Projects
+			.Where(project => project.Members.Any(member => member.UserId == requesterId.Value))
 			.Select(project => new GetAllProjectsResult(
 				project.Id.ToString(),
 				project.Name))
@@ -27,7 +29,7 @@ public class ProjectDtoRepository(GamingManagerReadContext context) : IProjectDt
 				.ThenInclude(participant => participant.Bans)
 			.Include(project => project.Participants)
 				.ThenInclude(participant => participant.Account)
-			.Include(project => project.TeamMembers)
+			.Include(project => project.Members)
 				.ThenInclude(teamMember => teamMember.User)
 			.Where(project => project.Id == projectId.Value)
 			.Select(project => new GetProjectResult(
@@ -59,7 +61,7 @@ public class ProjectDtoRepository(GamingManagerReadContext context) : IProjectDt
 					.ToList()
 					))
 				.ToList(),
-				project.TeamMembers.Select(teamMember => new GetProjectTeamMemberResult(
+				project.Members.Select(teamMember => new GetProjectTeamMemberResult(
 					teamMember.Id.ToString(),
 					teamMember.Role.ToString(),
 					teamMember.TeamMemberSince,

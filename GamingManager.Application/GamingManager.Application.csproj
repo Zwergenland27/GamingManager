@@ -15,10 +15,8 @@
     <Folder Include="Features\GameServers\Commands\BeginMaintenance\" />
     <Folder Include="Features\GameServers\Commands\FinishMaintenance\" />
     <Folder Include="Features\GameServers\DTOs\" />
-    <Folder Include="Features\Projects\DTOs\" />
     <Folder Include="Features\Servers\Commands\BeginMaintenance\" />
     <Folder Include="Features\Servers\Commands\FinishMaintenance\" />
-    <Folder Include="Features\Servers\DTOs\" />
     <Folder Include="Features\Users\DTOs\" />
   </ItemGroup>
 

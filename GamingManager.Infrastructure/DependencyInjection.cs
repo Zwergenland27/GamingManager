@@ -2,12 +2,14 @@
 using GamingManager.Application.Features.Accounts;
 using GamingManager.Application.Features.Games;
 using GamingManager.Application.Features.GameServers;
+using GamingManager.Application.Features.GameServerTickets;
 using GamingManager.Application.Features.Projects;
 using GamingManager.Application.Features.Servers;
 using GamingManager.Application.Features.Users;
 using GamingManager.Domain.Accounts;
 using GamingManager.Domain.Games;
 using GamingManager.Domain.GameServers;
+using GamingManager.Domain.GameServerTickets;
 using GamingManager.Domain.Projects;
 using GamingManager.Domain.Servers;
 using GamingManager.Domain.Users;
@@ -80,6 +82,8 @@ public static class DependencyInjection
 			.AddTransient<IGameDtoRepository, GameDtoRepository>()
 			.AddTransient<IGameServerRepository, GameServerRepository>()
 			.AddTransient<IGameServerDtoRepository, GameServerDtoRepository>()
+			.AddTransient<IGameServerTicketRepository, GameServerTicketRepository>()
+			.AddTransient<IGameServerTicketDtoRepository, GameServerTicketDtoRepository>()
 			.AddTransient<IProjectRepository, ProjectRepository>()
 			.AddTransient<IProjectDtoRepository, ProjectDtoRepository>()
 			.AddTransient<IServerRepository, ServerRepository>()

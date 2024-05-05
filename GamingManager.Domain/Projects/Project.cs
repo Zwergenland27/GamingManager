@@ -9,6 +9,10 @@ using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Projects.ValueObjects;
 using GamingManager.Domain.Projects.Events;
 using GamingManager.Domain.Projects.Entities;
+using GamingManager.Domain.Users.ValueObjects;
+using GamingManager.Domain.GameServerTickets.ValueObjects;
+using GamingManager.Domain.GameServerRequests;
+using GamingManager.Domain.Accounts.ValueObjects;
 
 namespace GamingManager.Domain.Projects;
 
@@ -19,7 +23,7 @@ public class Project : AggregateRoot<ProjectId>
 {
 	private readonly List<Participant> _participants = [];
 
-	private readonly List<TeamMember> _team = [];
+	private readonly List<Member> _members = [];
 
 	private Project(
 		ProjectId id,
@@ -59,22 +63,38 @@ public class Project : AggregateRoot<ProjectId>
 
 	public IReadOnlyCollection<Participant> Participants => _participants.AsReadOnly();
 
-	public IReadOnlyCollection<TeamMember> Team => _team.AsReadOnly();
+	public IReadOnlyCollection<Member> Members => _members.AsReadOnly();
 
 	public bool PlayersOnline => _participants.Any(participant => participant.Online);
 
 	public static CanFail<Project> Create(ProjectName name, Game game, ProjectStartsAtUtc start, User owner)
 	{
 		var project = new Project(ProjectId.CreateNew(), game.Id, name, start);
-		var organisatorResult = project.AddToTeam(owner, TeamRole.Administrator);
+		var organisatorResult = project.AddMember(owner, MemberRole.Administrator);
 		if (organisatorResult.HasFailed) return organisatorResult.Errors;
 		project.RaiseDomainEvent(new ProjectCreatedEvent(project.Id));
 		return project;
 	}
 
-	public CanFail Join(Account account, SessionStartsAtUtc joinTime)
+	public CanFail<GameServerTicket> CreateTicket(UserId auditorUserId, TicketTitle title, TicketDetails details)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
+
+		if(ServerId is not null) return Errors.Projects.ServerAssigned;
+
+		return GameServerTicket.Create(Id, auditorUserId, title, details);
+	}
+
+	public void SetServer(GameServerId serverId)
+	{
+		ServerId = serverId;
+	}
+
+	public CanFail Join(AccountId accountId, SessionStartsAtUtc joinTime)
+	{
+		var participant = _participants.FirstOrDefault(participant => participant.AccountId == accountId);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		if (Ended) return Errors.Projects.Ended;
@@ -83,18 +103,15 @@ public class Project : AggregateRoot<ProjectId>
 		return participant.Join(ServerId!, joinTime);
 	}
 
-	public CanFail Leave(Account account, SessionEndsAtUtc leaveTime)
+	public CanFail Leave(AccountId accountId, SessionEndsAtUtc leaveTime)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
+		var participant = _participants.FirstOrDefault(participant => participant.AccountId == accountId);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
-		var leaveResult = participant.Leave(ServerId!, leaveTime, false);
-		if (leaveResult.HasFailed) return leaveResult.Errors;
+		var lastPlayer = _participants.Count(participant => participant.Online) == 1;
 
-		if(!_participants.Any(participant => participant.Online))
-		{
-			RaiseDomainEvent(new LastParticipantLeftEvent(Id));
-		}
+		var leaveResult = participant.Leave(ServerId!, leaveTime, lastPlayer, false);
+		if (leaveResult.HasFailed) return leaveResult.Errors;
 
 		return CanFail.Success();
 	}
@@ -114,33 +131,50 @@ public class Project : AggregateRoot<ProjectId>
 		return result;
 	}
 
-	public CanFail<Ban> BanPermanent(Account account, Reason reason)
+	public CanFail<Ban> BanPermanent(UserId auditorUserId, ParticipantId participantId, Reason reason)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if(auditor is null) return Errors.Projects.Members.Forbidden;
+		if(auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
+
+		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		return participant.BanPermanent(reason);
 	}
 
-	public CanFail<Ban> BanTemporary(Account account, Reason reason, TimeSpan duration)
+	public CanFail<Ban> BanTemporary(UserId auditorUserId, ParticipantId participantId, Reason reason, TimeSpan duration)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
+
+		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		return participant.BanTemporary(reason, duration);
 	}
 
-	public CanFail Pardon(Account account)
+	public CanFail Pardon(UserId auditorUserId, ParticipantId participantId)
 	{
-		var participant = _participants.FirstOrDefault(participant => participant.AccountId == account.Id);
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
+
+		var participant = _participants.FirstOrDefault(participant => participant.Id == participantId);
 		if (participant is null) return Errors.Projects.Participants.NotParticipating;
 
 		return participant.Pardon();
 	}
 
-	public CanFail<Participant> Allow(Account account)
+	public CanFail<Participant> Allow(UserId auditorUserId, Account account)
 	{
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
+
 		if (account.GameId != GameId) return Errors.Projects.Participants.WrongGame;
+		if (!_members.Any(member => member.UserId == account.UserId)) return Errors.Projects.Members.NoMember;
 		if (_participants.Any(participant => participant.AccountId == account.Id)) return Errors.Projects.Participants.AlreadyParticipating;
 
 		var participant = new Participant(Id, account.Id);
@@ -148,33 +182,73 @@ public class Project : AggregateRoot<ProjectId>
 		return participant;
 	}
 
-	public CanFail AddToTeam(User user, TeamRole role)
+	public CanFail AddMember(UserId auditorUserId, User user, MemberRole role)
 	{
-		if (_team.Any(teamMember => teamMember.UserId == user.Id)) return Errors.Projects.Team.AlreadyMember;
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
 
-		var teamMember = new TeamMember(Id, user.Id, role);
+		if(role == MemberRole.Administrator && auditor.Role != MemberRole.Administrator) return Errors.Projects.Members.Forbidden;
 
-		_team.Add(teamMember);
-		RaiseDomainEvent(new TeamMemberAddedEvent(Id, user.Id, teamMember.Id, role));
+		return AddMember(user, role);
+	}
+
+	private CanFail AddMember(User user, MemberRole role)
+	{
+		if (_members.Any(teamMember => teamMember.UserId == user.Id)) return Errors.Projects.Members.AlreadyMember;
+
+		var teamMember = new Member(Id, user.Id, role);
+
+		_members.Add(teamMember);
+		RaiseDomainEvent(new MemberAddedEvent(Id, user.Id, teamMember.Id, role));
 		return CanFail.Success();
 	}
 
-	public CanFail RemoveFromTeam(User user)
+	public CanFail ChangeMemberRole(UserId auditorUserId, MemberId memberId, MemberRole role)
 	{
-		var teamMember = _team.FirstOrDefault(teamMember => teamMember.UserId == user.Id);
-		if (teamMember is null) return Errors.Projects.Team.NoMember;
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
 
-		if (!_team.Any(teamMember =>
+		if (role == MemberRole.Administrator && auditor.Role != MemberRole.Administrator) return Errors.Projects.Members.Forbidden;
+
+		var teamMember = _members.FirstOrDefault(teamMember => teamMember.Id == memberId);
+		if (teamMember is null) return Errors.Projects.Members.NoMember;
+
+		if (teamMember.Role == role) return CanFail.Success();
+		if(teamMember.Role == MemberRole.Administrator && auditor.Role != MemberRole.Administrator) return Errors.Projects.Members.Forbidden;
+
+		teamMember.Role = role;
+		RaiseDomainEvent(new MemberRoleChangedEvent(Id, teamMember.Id, role));
+		return CanFail.Success();
+	}
+
+	public CanFail RemoveMember(UserId auditorUserId, MemberId memberId)
+	{
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
+
+		var teamMember = _members.FirstOrDefault(teamMember => teamMember.Id == memberId);
+		if (teamMember is null) return Errors.Projects.Members.NoMember;
+
+		if (!_members.Any(teamMember =>
 			teamMember.Id != teamMember.Id &&
-			teamMember.Role == TeamRole.Administrator)) return Errors.Projects.Team.NoAdmin;
+			teamMember.Role == MemberRole.Administrator)) return Errors.Projects.Members.NoAdmin;
 
-		_team.Remove(teamMember);
-		RaiseDomainEvent(new TeamMemberRemovedEvent(Id, teamMember.Id));
+		_members.Remove(teamMember);
+		RaiseDomainEvent(new MemberRemovedEvent(Id, teamMember.Id));
 		return CanFail.Success();
 	}
 
-	public CanFail RescheduleStart(ProjectStartsAtUtc startUtc)
+	public bool CanStartServer(UserId requesterId) => _members.Any(member => member.UserId == requesterId);
+
+	public CanFail RescheduleStart(UserId auditorUserId, ProjectStartsAtUtc startUtc)
 	{
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
+
 		if (Ended) return Errors.Projects.Ended;
 		if (startUtc.Value <= DateTime.UtcNow) return Errors.Projects.StartInPast;
 
@@ -184,8 +258,12 @@ public class Project : AggregateRoot<ProjectId>
 		return CanFail.Success();
 	}
 
-	public CanFail SetPlannedEnd(ProjectEndsAtUtc endUtc)
+	public CanFail SetPlannedEnd(UserId auditorUserId, ProjectEndsAtUtc endUtc)
 	{
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
+
 		if (Ended) return Errors.Projects.Ended;
 		if (endUtc.Value <= DateTime.UtcNow) return Errors.Projects.EndInPast;
 		if (endUtc.Value <= Start.Value) return Errors.Projects.EndBeforeStart;
@@ -195,9 +273,14 @@ public class Project : AggregateRoot<ProjectId>
 		return CanFail.Success();
 	}
 
-	public void Finish()
+	public CanFail Finish(UserId auditorUserId)
 	{
+		var auditor = _members.FirstOrDefault(member => member.UserId == auditorUserId);
+		if (auditor is null) return Errors.Projects.Members.Forbidden;
+		if (auditor.Role != MemberRole.Administrator && auditor.Role != MemberRole.Moderator) return Errors.Projects.Members.Forbidden;
+
 		End = new ProjectEndsAtUtc(DateTime.UtcNow);
 		RaiseDomainEvent(new ProjectFinishedEvent(Id));
+		return CanFail.Success();
 	}
 }

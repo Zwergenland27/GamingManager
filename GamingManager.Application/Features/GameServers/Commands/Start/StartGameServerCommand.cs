@@ -11,11 +11,11 @@ public class StartGameServerCommandBuilder : IRequestBuilder<StartGameServerPara
 {
 	public ValidatedRequiredProperty<StartGameServerCommand> Configure(RequiredPropertyBuilder<StartGameServerParameters, StartGameServerCommand> builder)
 	{
-		var name = builder.ClassProperty(r => r.GameServerName)
+		var name = builder.ClassProperty(r => r.Name)
 			.Required(Errors.GameServer.Start.NameMissing)
-			.Map(p => p.GameServerName, value => new GameServerName(value));
+			.Map(p => p.Name, value => new GameServerName(value));
 
 		return builder.Build(() => new StartGameServerCommand(name));
 	}
 }
-public record StartGameServerCommand(GameServerName GameServerName) : ICommand;
+public record StartGameServerCommand(GameServerName Name) : ICommand;

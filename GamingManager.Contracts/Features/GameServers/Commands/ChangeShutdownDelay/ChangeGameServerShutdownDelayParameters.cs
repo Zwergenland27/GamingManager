@@ -14,7 +14,7 @@ public class ChangeGameServerShutdownDelayParameters : IParameters
     /// </summary>
     /// <example>Minecraft-04</example>
     [JsonIgnore]
-    public string? GameServerName { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     /// Shutdown delay after last player left in minutes

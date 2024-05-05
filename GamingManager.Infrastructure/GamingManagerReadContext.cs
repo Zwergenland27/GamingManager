@@ -11,9 +11,11 @@ public class GamingManagerReadContext(DbContextOptions<GamingManagerReadContext>
 
 	public DbSet<GameServerReadModel> GameServers { get; set; }
 
+	public DbSet<GameServerTicketReadModel> GameServerTickets { get; set; }
+
 	public DbSet<ProjectReadModel> Projects { get; set; }
 
-	public DbSet<TeamMemberReadModel> TeamMembers { get; set; }
+	public DbSet<MemberReadModel> TeamMembers { get; set; }
 
 	public DbSet<ParticipantReadModel> Participants { get; set; }
 

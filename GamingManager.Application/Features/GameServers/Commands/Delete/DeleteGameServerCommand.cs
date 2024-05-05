@@ -11,11 +11,11 @@ public class DeleteGameServerCommandBuilder : IRequestBuilder<DeleteGameServerPa
 {
 	public ValidatedRequiredProperty<DeleteGameServerCommand> Configure(RequiredPropertyBuilder<DeleteGameServerParameters, DeleteGameServerCommand> builder)
 	{
-		var name = builder.ClassProperty(r => r.GameServerName)
+		var name = builder.ClassProperty(r => r.Name)
 			.Required(Errors.GameServer.Delete.NameMissing)
-			.Map(p => p.GameServerName, value => new GameServerName(value));
+			.Map(p => p.Name, value => new GameServerName(value));
 
 		return builder.Build(() => new DeleteGameServerCommand(name));
 	}
 }
-public record DeleteGameServerCommand(GameServerName GameServerName) : ICommand;
+public record DeleteGameServerCommand(GameServerName Name) : ICommand;

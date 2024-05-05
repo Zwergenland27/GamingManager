@@ -13,5 +13,5 @@ public class GameServerStartedParameters : IParameters
     /// </summary>
     /// <example>Minecraft-04</example>
     [JsonIgnore]
-    public string? GameServerName { get; set; }
+    public string? Name { get; set; }
 }

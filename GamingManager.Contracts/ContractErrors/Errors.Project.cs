@@ -6,23 +6,42 @@ public static partial class Errors
 {
 	public static class Project
 	{
-		public static class AddToTeam
+		public static class AddMember
 		{
 			public static Error ProjectIdMissing => Error.Validation(
-				"Project.AddToTeam.ProjectId.Missing",
+				"Project.AddMember.ProjectId.Missing",
 				"The projectId field is required.");
 
 			public static Error UsernameMissing => Error.Validation(
-				"Project.AddToTeam.Username.Missing",
+				"Project.AddMember.Username.Missing",
 				"The username field is required.");
 
 			public static Error RoleMissing => Error.Validation(
-				"Project.AddToTeam.Role.Missing",
+				"Project.AddMember.Role.Missing",
 				"The role field is required.");
 
 			public static Error RoleInvalid => Error.Validation(
-				"Project.AddToTeam.Role.Invalid",
+				"Project.AddMember.Role.Invalid",
 				"The role field is not a valid team role.");
+		}
+
+		public static class ChangeMemberRole
+		{
+			public static Error ProjectIdMissing => Error.Validation(
+				"Project.ChangeMemberRole.ProjectId.Missing",
+				"The projectId field is required.");
+
+			public static Error MemberIdMissing => Error.Validation(
+				"Project.ChangeMemberRole.MemberId.Missing",
+				"The memberId field is required.");
+
+			public static Error NewRoleMissing => Error.Validation(
+				"Project.ChangeMemberRole.NewRole.Missing",
+				"The newRole field is required.");
+
+			public static Error NewRoleInvalid => Error.Validation(
+				"Project.ChangeMemberRole.NewRole.Invalid",
+				"The newRole field is not a valid team role.");
 		}
 
 		public static class AllowAccount
@@ -42,9 +61,9 @@ public static partial class Errors
 				"Project.BanAccount.ProjectId.Missing",
 				"The projectId field is required.");
 
-			public static Error AccountIdMissing => Error.Validation(
-				"Project.BanAccount.AccountId.Missing",
-				"The accountId field is required.");
+			public static Error ParticipantIdMissing => Error.Validation(
+				"Project.BanAccount.ParticipantId.Missing",
+				"The participantId field is required.");
 
 			public static Error ReasonMissing => Error.Validation(
 				"Project.BanAccount.Reason.Missing",
@@ -74,6 +93,20 @@ public static partial class Errors
 				"The username field is required.");
 		}
 
+		public static class CreateTicket
+		{
+			public static Error ProjectIdMissing => Error.Validation(
+				"Project.CreateTicket.ProjectId.Missing",
+				"The projectId field is required.");
+
+			public static Error TitleMissing => Error.Validation(
+				"Project.CreateTicket.Title.Missing",
+				"The title field is required.");
+
+			public static Error DetailsMissing => Error.Validation(
+				"Project.CreateTicket.Details.Missing",
+				"The details field is required.");
+		}
 		public static class Finish
 		{
 			public static Error ProjectIdMissing => Error.Validation(
@@ -117,20 +150,20 @@ public static partial class Errors
 				"Project.Pardon.ProjectId.Missing",
 				"The projectId field is required.");
 
-			public static Error AccountIdMissing => Error.Validation(
-				"Project.Pardon.AccountId.Missing",
-				"The accountId field is required.");
+			public static Error ParticipantIdMissing => Error.Validation(
+				"Project.Pardon.ParticipantId.Missing",
+				"The participantId field is required.");
 		}
 
-		public static class RemoveFromTeam
+		public static class RemoveMember
 		{
 			public static Error ProjectIdMissing => Error.Validation(
-				"Project.RemoveFromTeam.ProjectId.Missing",
+				"Project.RemoveMember.ProjectId.Missing",
 				"The projectId field is required.");
 
-			public static Error UsernameMissing => Error.Validation(
-				"Project.RemoveFromTeam.Username.Missing",
-				"The username field is required.");
+			public static Error MemberIdMissing => Error.Validation(
+				"Project.RemoveMember.MemberId.Missing",
+				"The memberId field is required.");
 		}
 
 		public static class Reschedule
@@ -153,6 +186,17 @@ public static partial class Errors
 			public static Error PlannedEndAtUtcMissing => Error.Validation(
 				"Project.SetPlannedEnd.PlannedEndUtc.Missing",
 				"The plannedEndUtc field is required.");
+		}
+
+		public static class StartServer
+		{
+			public static Error ProjectIdMissing => Error.Validation(
+				"Project.StartServer.ProjectId.Missing",
+				"The projectId field is required.");
+
+			public static Error UserIdMissing => Error.Validation(
+				"Project.StartServer.UserId.Missing",
+				"The userId field is required.");
 		}
 
 		public static class Get

@@ -1,5 +1,5 @@
 ﻿using GamingManager.Application.Abstractions;
-using GamingManager.Contracts.Features.Games.Queries;
+using GamingManager.Contracts.Features.Games.Queries.GetAll;
 
 namespace GamingManager.Application.Features.Games.Queries.GetAll;
 

@@ -18,7 +18,11 @@ public class UserReadModel
 
 	public bool EmailConfirmed { get; set; }
 
+	public IReadOnlyCollection<GameServerTicketReadModel> IssuedTickets { get; set; }
+
+	public IReadOnlyCollection<GameServerTicketReadModel> CreatedTickets { get; set; }
+
 	public IReadOnlyCollection<AccountReadModel> Accounts { get; set; }
 
-	public IReadOnlyCollection<TeamMemberReadModel> MemberOfTeam { get; set; }
+	public IReadOnlyCollection<MemberReadModel> MemberOfTeam { get; set; }
 }

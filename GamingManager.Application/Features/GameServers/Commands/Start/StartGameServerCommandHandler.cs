@@ -14,7 +14,7 @@ public class StartGameServerCommandHandler(
 {
 	public async Task<CanFail> Handle(StartGameServerCommand request, CancellationToken cancellationToken)
 	{
-		var gameServer = await gameServerRepository.GetAsync(request.GameServerName);
+		var gameServer = await gameServerRepository.GetAsync(request.Name);
 		if (gameServer is null) return Errors.GameServers.ServerNameNotFound;
 
 		if (gameServer.HostedOnId is null) return Errors.GameServers.ServerNotHosted;
@@ -26,8 +26,6 @@ public class StartGameServerCommandHandler(
 		{
 			var startGameServerResult = gameServer.Start();
 			if (startGameServerResult.HasFailed) return startGameServerResult.Errors;
-
-			if (server.Maintenance) return Errors.Servers.NotStartable;
 		}
 		else
 		{

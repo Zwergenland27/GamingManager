@@ -1,6 +1,7 @@
 ﻿using GamingManager.Domain.Abstractions;
 using GamingManager.Domain.Accounts;
 using GamingManager.Domain.Games;
+using GamingManager.Domain.GameServerRequests;
 using GamingManager.Domain.GameServers;
 using GamingManager.Domain.Projects;
 using GamingManager.Domain.Servers;
@@ -19,6 +20,8 @@ public class GamingManagerDomainContext(DbContextOptions<GamingManagerDomainCont
 	public DbSet<Game> Games { get; set; }
 
 	public DbSet<GameServer> GameServers { get; set; }
+
+	public DbSet<GameServerTicket> GameServerTickets { get; set; }
 
 	public DbSet<Project> Projects { get; set; }
 

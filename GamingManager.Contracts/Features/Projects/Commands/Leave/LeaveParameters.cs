@@ -9,11 +9,17 @@ namespace GamingManager.Contracts.Features.Projects.Commands.Leave;
 /// </summary>
 public class LeaveParameters : IParameters
 {
-    ///<summary>
-    /// Unique id of the project
-    /// </summary>
-    /// <example>00000000-0000-0000-0000-000000000000</example>
-    [JsonIgnore]
+	/// <summary>
+	/// Id of the gameServer that sent this request
+	/// </summary>
+	[JsonIgnore]
+	public string? GameServerId { get; set; }
+
+	///<summary>
+	/// Unique id of the project
+	/// </summary>
+	/// <example>00000000-0000-0000-0000-000000000000</example>
+	[JsonIgnore]
     public string? ProjectId { get; set; }
 
     ///<summary>

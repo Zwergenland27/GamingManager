@@ -118,5 +118,15 @@ public static partial class Errors
 				"Account.Get.AccountNameMissing",
 				"The accountName field is required.");
 		}
+
+        public static class GetAll
+        {
+			/// <summary>
+            /// The game name field is missing
+            /// </summary>
+            public static Error GameNameMissing => Error.Validation(
+                "Account.GetAll.GameNameMissing",
+                "The gameName field is required.");
+        }
     }
 }

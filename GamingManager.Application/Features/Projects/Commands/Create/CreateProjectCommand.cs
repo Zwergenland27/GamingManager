@@ -13,6 +13,10 @@ public class CreateProjectCommandBuilder : IRequestBuilder<CreateProjectParamete
 {
 	public ValidatedRequiredProperty<CreateProjectCommand> Configure(RequiredPropertyBuilder<CreateProjectParameters, CreateProjectCommand> builder)
 	{
+		var auditorId = builder.ClassProperty(r => r.AuditorId)
+			.Required(Errors.General.AuditorMissing)
+			.Map(p => p.AuditorId, UserId.Create);
+
 		var gameName = builder.ClassProperty(r => r.GameName)
 			.Required(Errors.Project.Create.GameNameMissing)
 			.Map(p => p.GameName, value => new GameName(value));
@@ -25,16 +29,12 @@ public class CreateProjectCommandBuilder : IRequestBuilder<CreateProjectParamete
 			.Required(Errors.Project.Create.StartsAtUtcMissing)
 			.Map(p => p.StartsAtUtc, value => new ProjectStartsAtUtc(value));
 
-		var username = builder.ClassProperty(r => r.Username)
-			.Required(Errors.Project.Create.UsernameMissing)
-			.Map(p => p.Username, value => new Username(value));
-
-		return builder.Build(() => new CreateProjectCommand(gameName, projectName, projectStartsAtUtc, username));
+		return builder.Build(() => new CreateProjectCommand(auditorId, gameName, projectName, projectStartsAtUtc));
 	}
 }
 
 public record CreateProjectCommand(
+	UserId AuditorId,
 	GameName GameName,
 	ProjectName ProjectName,
-	ProjectStartsAtUtc StartsAtUtc,
-	Username Username) : ICommand<CreateProjectResult>;
+	ProjectStartsAtUtc StartsAtUtc) : ICommand<CreateProjectResult>;

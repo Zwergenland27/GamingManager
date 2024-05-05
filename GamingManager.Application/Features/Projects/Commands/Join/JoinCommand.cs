@@ -4,6 +4,7 @@ using GamingManager.Application.Abstractions;
 using GamingManager.Contracts.ContractErrors;
 using GamingManager.Contracts.Features.Projects.Commands.Join;
 using GamingManager.Domain.Accounts.ValueObjects;
+using GamingManager.Domain.GameServers.ValueObjects;
 using GamingManager.Domain.Projects.ValueObjects;
 
 namespace GamingManager.Application.Features.Projects.Commands.Join;
@@ -12,6 +13,10 @@ public class JoinCommandBuilder : IRequestBuilder<JoinParameters, JoinCommand>
 {
 	public ValidatedRequiredProperty<JoinCommand> Configure(RequiredPropertyBuilder<JoinParameters, JoinCommand> builder)
 	{
+		var gameServerId = builder.ClassProperty(r => r.GameServerId)
+			.Required(Errors.General.GameServerIdMissing)
+			.Map(p => p.GameServerId, GameServerId.Create);
+
 		var projectId = builder.ClassProperty(r => r.ProjectId)
 			.Required(Errors.Project.Join.ProjectIdMissing)
 			.Map(p => p.ProjectId, ProjectId.Create);
@@ -24,11 +29,12 @@ public class JoinCommandBuilder : IRequestBuilder<JoinParameters, JoinCommand>
 			.Required(Errors.Project.Join.JoinTimeUtcMissing)
 			.Map(p => p.JoinTimeUtc, value => new SessionStartsAtUtc(value));
 
-		return builder.Build(() => new JoinCommand(projectId, uuid, joinTimeUtc));
+		return builder.Build(() => new JoinCommand(gameServerId, projectId, uuid, joinTimeUtc));
 	}
 }
 
 public record JoinCommand(
+	GameServerId GameServerId,
 	ProjectId ProjectId,
 	Uuid Uuid,
 	SessionStartsAtUtc JoinTimeUtc) : ICommand;

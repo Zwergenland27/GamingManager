@@ -14,4 +14,10 @@ public record CancelGameServerShutdownParameters : IParameters
     /// <example>Minecraft-04</example>
     [JsonIgnore]
     public string? GameServerName { get; set; }
+
+    /// <summary>
+    /// The username of the user that is canceling the shutdown
+    /// </summary>
+    [JsonIgnore]
+    public string? Username { get; set; }
 }

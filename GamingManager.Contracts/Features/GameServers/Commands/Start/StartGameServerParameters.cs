@@ -13,5 +13,5 @@ public class StartGameServerParameters : IParameters
     /// </summary>
     /// <example>Minecraft-04</example>
     [Required]
-    public string? GameServerName { get; set; }
+    public string? Name { get; set; }
 }

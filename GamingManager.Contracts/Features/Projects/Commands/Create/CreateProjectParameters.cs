@@ -1,5 +1,6 @@
 ﻿using CleanDomainValidation.Application;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace GamingManager.Contracts.Features.Projects.Commands.Create;
 
@@ -8,11 +9,18 @@ namespace GamingManager.Contracts.Features.Projects.Commands.Create;
 /// </summary>
 public class CreateProjectParameters : IParameters
 {
-    ///<summary>
-    /// Name of the game
-    /// </summary>
-    /// <example>Minecraft</example>
-    [Required]
+
+	/// <summary>
+	/// Id of the user that is creating the project
+	/// </summary>
+	[JsonIgnore]
+	public string? AuditorId { get; set; }
+
+	///<summary>
+	/// Name of the game
+	/// </summary>
+	/// <example>Minecraft</example>
+	[Required]
     public string? GameName { get; set; }
 
     /// <summary>
@@ -27,13 +35,4 @@ public class CreateProjectParameters : IParameters
     /// </summary>
     [Required]
     public DateTime? StartsAtUtc { get; set; }
-
-
-    /// <summary>
-    /// Username of the user
-    /// </summary>
-    /// <example>Zwergenland27</example>
-    [Required]
-    public string? Username { get; set; }
-
 }

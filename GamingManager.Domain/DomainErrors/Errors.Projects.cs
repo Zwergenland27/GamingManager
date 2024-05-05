@@ -1,4 +1,5 @@
 ﻿using CleanDomainValidation.Domain;
+using GamingManager.Domain.GameServerRequests;
 using GamingManager.Domain.Projects;
 using GamingManager.Domain.Projects.ValueObjects;
 
@@ -14,6 +15,9 @@ public static partial class Errors
 	/// </summary>
 	public static class Projects
 	{
+		public static Error WrongGameServer => Error.Forbidden(
+			"Project.WrongGameServer",
+			"The game server is not authorized for this project");
 		/// <summary>
 		/// A project with this id does not exist
 		/// </summary>
@@ -54,6 +58,14 @@ public static partial class Errors
 			"Project.Ended",
 			"The project has ended");
 
+		public static Error NoServer => Error.Conflict(
+			"Project.NoServer",
+			"No server is assigned to the project");
+
+		public static Error ServerAssigned => Error.Conflict(
+			"Project.ServerAssigned",
+			"A server is already assigned to the project");
+
 		/// <summary>
 		/// Errors that occur when working with <see cref="ProjectId"/>
 		/// </summary>
@@ -67,31 +79,38 @@ public static partial class Errors
 				"The provided id is not a valid guid");
 		}
 
-		public static class Team
+		public static class Members
 		{
 			/// <summary>
 			/// The user is already a member in the management team
 			/// </summary>
 			public static Error AlreadyMember => Error.Conflict(
 				"Project.Team.AlreadyMember",
-				"The user is already a member in the management team");
+				"The user is already a member of the project");
+
+			/// <summary>
+			/// Only team members are allowed to do this
+			/// </summary>
+			public static Error Forbidden => Error.Forbidden(
+				"Project.Team.UnAuthorized",
+				"Only team members are allowed to do this");
 
 			/// <summary>
 			/// The user is no member of the management team
 			/// </summary>
 			public static Error NoMember => Error.NotFound(
 				"Project.Team.NoMember",
-				"The user is no member of the management team");
+				"The user is not member of the project");
 
 			/// <summary>
 			/// The user cannot be removed from the organisators because no other administrator is selected
 			/// </summary>
 			public static Error NoAdmin => Error.Conflict(
 				"Project.Team.NoAdmin",
-				"The user cannot be removed from the management team because no other administrator is selected");
+				"The user cannot be removed because no other administrator is selected");
 
 			/// <summary>
-			/// Errors that occur when working with <see cref="TeamMemberId"/>
+			/// Errors that occur when working with <see cref="MemberId"/>
 			/// </summary>
 			public static class Id
 			{

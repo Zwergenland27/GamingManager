@@ -38,6 +38,13 @@ public static partial class Errors
 			"The game server is not hosted on any server");
 
 		/// <summary>
+		/// The operation can only be done when the game server is offline
+		/// </summary>
+		public static Error OfflineNeeded => Error.Conflict(
+			"GameServer.OfflineNeeded",
+			"The operation can only be done when the game server is offline");
+
+		/// <summary>
 		/// The operation can only be done when the game server is in maintenance mode
 		/// </summary>
 		public static Error MaintenanceNeeded => Error.Conflict(
@@ -127,6 +134,13 @@ public static partial class Errors
 		public static Error ActiveProject => Error.Conflict(
 			"GameServer.ActiveProject",
 			"The project on the game server is still active");
+
+		/// <summary>
+		/// The server is currently maintained
+		/// </summary>
+		public static Error InMaintenance => Error.Conflict(
+			"GameServer.InMaintenance",
+			"The game server is currently maintained");
 
 		/// <summary>
 		/// Errors that occur when working with <see cref="GameServerId"/>

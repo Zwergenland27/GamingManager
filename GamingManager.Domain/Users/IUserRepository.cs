@@ -12,6 +12,8 @@ public interface IUserRepository
 
 	Task<bool> IsEmailUnique(Email email);
 
+	IAsyncEnumerable<User> GetAllAdmins();
+
 	Task<User?> GetAsync(UserId id);
 
 	Task<User?> GetAsync(Email email);

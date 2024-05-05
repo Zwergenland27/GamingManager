@@ -20,7 +20,8 @@ public class UseServerCommandHandler(
 		var server = await serverRepository.GetAsync(request.Hostname);
 		if (server is null) return Errors.Servers.HostnameNotFound;
 
-		gameServer.Use(server);
+		var result = gameServer.Use(server);
+		if(result.HasFailed) return result.Errors;
 
 		await unitOfWork.SaveAsync(cancellationToken);
 

@@ -13,7 +13,7 @@ public class GameServerCrashedCommandBuilder : IRequestBuilder<GameServerCrashed
 	{
 		var name = builder.ClassProperty(r => r.Name)
 			.Required(Errors.GameServer.Crashed.NameMissing)
-			.Map(p => p.GameServerName, value => new GameServerName(value));
+			.Map(p => p.Name, value => new GameServerName(value));
 
 		var crashedAtUtc = builder.ClassProperty(r => r.CrashedAtUtc)
 			.Required(Errors.GameServer.Crashed.CrashedAtUtcMissing)

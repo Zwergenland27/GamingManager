@@ -1,5 +1,5 @@
-﻿using GamingManager.Contracts.Features.Games.Queries;
-using GamingManager.Contracts.Features.Games.Queries.Get;
+﻿using GamingManager.Contracts.Features.Games.Queries.Get;
+using GamingManager.Contracts.Features.Games.Queries.GetAll;
 using GamingManager.Domain.Games.ValueObjects;
 
 namespace GamingManager.Application.Features.Games;

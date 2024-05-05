@@ -14,7 +14,7 @@ public class RescheduleProjectStartCommandHandler(
 		var project = await projectRepository.GetAsync(request.ProjectId);
 		if (project is null) return Errors.Projects.IdNotFound;
 
-		var result = project.RescheduleStart(request.PlannedStartUtc);
+		var result = project.RescheduleStart(request.AuditorId, request.PlannedStartUtc);
 		if (result.HasFailed) return result.Errors;
 
 		await unitOfWork.SaveAsync(cancellationToken);

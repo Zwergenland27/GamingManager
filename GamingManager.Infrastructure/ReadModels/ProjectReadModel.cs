@@ -18,9 +18,11 @@ public class ProjectReadModel
 
 	public DateTime? End { get; set; }
 
+	public IReadOnlyCollection<GameServerTicketReadModel> Tickets { get; set; }
+
 	public IReadOnlyCollection<ParticipantReadModel> Participants { get; set; }
 
-	public IReadOnlyCollection<TeamMemberReadModel> TeamMembers { get; set; }
+	public IReadOnlyCollection<MemberReadModel> Members { get; set; }
 
 	public bool Public { get; set; }
 }

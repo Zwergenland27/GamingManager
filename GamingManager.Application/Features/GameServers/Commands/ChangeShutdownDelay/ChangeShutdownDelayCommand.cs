@@ -5,7 +5,7 @@ using GamingManager.Contracts.ContractErrors;
 using GamingManager.Contracts.Features.GameServers.Commands.ChangeShutdownDelay;
 using GamingManager.Domain.GameServers.ValueObjects;
 
-namespace GamingManager.Application.Features.GameServers.Events.ChangeShutdownDelay;
+namespace GamingManager.Application.Features.GameServers.Commands.ChangeShutdownDelay;
 
 public class ChangeShutdownDelayCommandBuilder : IRequestBuilder<ChangeGameServerShutdownDelayParameters, ChangeShutdownDelayCommand>
 {
@@ -13,7 +13,7 @@ public class ChangeShutdownDelayCommandBuilder : IRequestBuilder<ChangeGameServe
 	{
 		var name = builder.ClassProperty(r => r.GameServerName)
 			.Required(Errors.GameServer.ChangeShutdownDelay.NameMissing)
-			.Map(p => p.GameServerName, value => new GameServerName(value));
+			.Map(p => p.Name, value => new GameServerName(value));
 
 		var shutdownDelay = builder.ClassProperty(r => r.ShutdownDelay)
 			.Required(Errors.GameServer.ChangeShutdownDelay.DelayMissing)

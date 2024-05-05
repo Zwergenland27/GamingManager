@@ -30,5 +30,7 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
             .HasConversion(
                 gameName => gameName.Value,
                 value => new GameName(value));
+
+        builder.Property(game => game.VerificationRequired);
     }
 }

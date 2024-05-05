@@ -116,7 +116,7 @@ public class Participant : Entity<ParticipantId>
 
     }
 
-    internal CanFail Leave(GameServerId gameServerId, SessionEndsAtUtc leaveTime, bool irregular = false)
+    internal CanFail Leave(GameServerId gameServerId, SessionEndsAtUtc leaveTime, bool lastPlayer, bool irregular = false)
     {
         var lastSession = _sessions
             .OrderBy(session => session.Start)
@@ -134,7 +134,7 @@ public class Participant : Entity<ParticipantId>
 		lastSession.Stop(leaveTime, irregular);
         Online = false;
         _playTime.Add(lastSession.Duration);
-        RaiseDomainEvent(new ParticipantLeftEvent(ProjectId, Id, gameServerId, leaveTime, irregular));
+        RaiseDomainEvent(new ParticipantLeftEvent(ProjectId, Id, gameServerId, leaveTime, lastPlayer, irregular));
 		return CanFail.Success();
 	}
 }

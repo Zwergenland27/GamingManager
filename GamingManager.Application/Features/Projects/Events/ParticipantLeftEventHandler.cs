@@ -13,7 +13,10 @@ public class ParticipantLeftEventHandler(
 		var gameServer = await gameServerRepository.GetAsync(notification.GameServer);
 		if (gameServer is null) throw new InvalidDataException("The player left a project which game server does not exist.");
 
-		var shutdownAtUtc = new GameServerShutdownAtUtc(DateTime.UtcNow.AddMinutes(gameServer.ShutdownDelay.Minutes));
-		gameServer.ScheduleShutdown(shutdownAtUtc);
+		if(notification.IsLast)
+		{
+			var shutdownAtUtc = new GameServerShutdownAtUtc(DateTime.UtcNow.AddMinutes(gameServer.ShutdownDelay.Minutes));
+			gameServer.ScheduleShutdown(shutdownAtUtc);
+		}
 	}
 }

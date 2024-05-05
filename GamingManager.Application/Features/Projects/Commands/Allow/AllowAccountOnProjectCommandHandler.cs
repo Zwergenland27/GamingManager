@@ -20,7 +20,7 @@ public class AllowAccountOnProjectCommandHandler(
 		var account = await accountRepository.GetAsync(request.AccountId);
 		if (account is null) return Errors.Accounts.IdNotFound;
 
-		var result = project.Allow(account);
+		var result = project.Allow(request.AuditorId, account);
 		if (result.HasFailed) return result.Errors;
 
 		await unitOfWork.SaveAsync(cancellationToken);

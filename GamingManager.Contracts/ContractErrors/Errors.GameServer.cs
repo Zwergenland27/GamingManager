@@ -12,8 +12,15 @@ public static partial class Errors
 			/// The name field is required
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
-				"GameServer.CancelShutdown.NameMissing",
-				"The Name field is required.");
+				"GameServer.CancelShutdown.Name.Missing",
+				"The name field is required.");
+
+			/// <summary>
+			/// The user name field is required
+			/// </summary>
+			public static Error UsernameMissing => Error.Validation(
+				"GameServer.CancelShutdown.Username.Missing",
+				"The username field is required.");
         }
 
 		public static class ChangeShutdownDelay
@@ -23,14 +30,14 @@ public static partial class Errors
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
 				"GameServer.ChangeShutdownDelay.NameMissing",
-				"The Name field is required.");
+				"The name field is required.");
 			 																	
 			/// <summary>
 			/// The delay field is required
 			/// </summary>
 			public static Error DelayMissing => Error.Validation(
 				"GameServer.ChangeShutdownDelay.DelayMissing",
-				"The Delay field is required.");
+				"The delay field is required.");
 		}
 
 		public static class Crashed
@@ -40,14 +47,14 @@ public static partial class Errors
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
 				"GameServer.Crashed.NameMissing",
-				"The Name field is required.");
+				"The name field is required.");
 
 			/// <summary>
 			/// The crashed at utc field is required
 			/// </summary>
 			public static Error CrashedAtUtcMissing => Error.Validation(
 				"GameServer.Crashed.CrashedAtUtcMissing",
-				"The Crashed At Utc field is required.");
+				"The crashed At Utc field is required.");
 		}
 
 		public static class Create
@@ -57,21 +64,21 @@ public static partial class Errors
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
 				"GameServer.Create.NameMissing",
-				"The Name field is required.");
+				"The name field is required.");
 			
 			/// <summary>
 			/// The project name field is required
 			/// </summary>
 			public static Error ProjectNameMissing => Error.Validation(
 				"GameServer.Create.ProjectNameMissing",
-				"The Project Name field is required.");
+				"The projectName field is required.");
 			
 			/// <summary>
 			/// The shutdown delay field is required
 			/// </summary>
 			public static Error ShutdownDelayMissing => Error.Validation(
 				"GameServer.Create.ShutdownDelayMissing",
-				"The Shutdown Delay field is required.");
+				"The shutdownDelay field is required.");
 		}
 
 		public static class Delete
@@ -81,7 +88,7 @@ public static partial class Errors
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
 				"GameServer.Delete.NameMissing",
-				"The Name field is required.");
+				"The name field is required.");
 		}
 
 		public static class ShuttedDown
@@ -91,7 +98,7 @@ public static partial class Errors
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
 				"GameServer.ShuttedDown.NameMissing",
-				"The Name field is required.");
+				"The name field is required.");
 		}
 
 		public static class Start
@@ -101,7 +108,7 @@ public static partial class Errors
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
 				"GameServer.Start.NameMissing",
-				"The Name field is required.");
+				"The name field is required.");
 		}
 
 		public static class Started
@@ -111,7 +118,7 @@ public static partial class Errors
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
 				"GameServer.Started.NameMissing",
-				"The Name field is required.");
+				"The name field is required.");
 		}
 
 		public static class UseServer
@@ -121,14 +128,14 @@ public static partial class Errors
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
 				"GameServer.Create.NameMissing",
-				"The Name field is required.");
+				"The name field is required.");
 
 			/// <summary>
 			/// The hostname field is required
 			/// </summary>
 			public static Error HostnameMissing => Error.Validation(
 				"GameServer.UseServer.HostnameMissing",
-				"The Hostname field is required.");
+				"The hostname field is required.");
 		}
 
 		public static class Get
@@ -138,7 +145,7 @@ public static partial class Errors
 			/// </summary>
 			public static Error NameMissing => Error.Validation(
 				"GameServer.Get.NameMissing",
-				"The Name field is required.");
+				"The name field is required.");
 		}
 	}
 }

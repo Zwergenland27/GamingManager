@@ -15,7 +15,7 @@ public class CreateGameCommandHandler(
 		var nameUnique = await gameRepository.IsNameUnique(request.Name);
 		if (!nameUnique) return Errors.Games.DuplicateName;
 
-		var gameResult = Game.Create(request.Name);
+		var gameResult = Game.Create(request.Name, request.VerificationRequired);
 		if (gameResult.HasFailed) return gameResult.Errors;
 
 		gameRepository.Add(gameResult.Value);
@@ -23,6 +23,7 @@ public class CreateGameCommandHandler(
 
 		return new CreateGameResult(
 			Id: gameResult.Value.Id.Value.ToString(),
-			Name: gameResult.Value.Name.Value);
+			Name: gameResult.Value.Name.Value,
+			VerificationRequired: gameResult.Value.VerificationRequired);
 	}
 }

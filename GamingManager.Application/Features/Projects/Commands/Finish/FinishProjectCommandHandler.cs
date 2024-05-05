@@ -14,7 +14,8 @@ public class FinishProjectCommandHandler(
 		var project = await projectRepository.GetAsync(request.ProjectId);
 		if (project is null) return Errors.Projects.IdNotFound;
 
-		project.Finish();
+		var result = project.Finish(request.AuditorId);
+		if(result.HasFailed) return result.Errors;
 
 		await unitOfWork.SaveAsync(cancellationToken);
 

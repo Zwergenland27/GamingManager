@@ -9,6 +9,6 @@ public class GetAllProjectsQueryHandler(
 {
 	public async Task<CanFail<IEnumerable<GetAllProjectsResult>>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
 	{
-		return await projectDtoRepository.GetAllAsync().ToListAsync(cancellationToken);
+		return await projectDtoRepository.GetAllAsync(request.AuditorId).ToListAsync(cancellationToken);
 	}
 }

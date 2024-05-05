@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GamingManager.Infrastructure.Configurations.Read;
 
-internal class TeamMemberReadModelConfiguration : IEntityTypeConfiguration<TeamMemberReadModel>
+internal class TeamMemberReadModelConfiguration : IEntityTypeConfiguration<MemberReadModel>
 {
-	public void Configure(EntityTypeBuilder<TeamMemberReadModel> builder)
+	public void Configure(EntityTypeBuilder<MemberReadModel> builder)
 	{
 		builder.HasKey(teamMember => teamMember.Id);
 
 		builder.HasOne(teamMember => teamMember.Project)
-			.WithMany(project => project.TeamMembers)
+			.WithMany(project => project.Members)
 			.HasForeignKey(teamMember => teamMember.ProjectId);
 	}
 }

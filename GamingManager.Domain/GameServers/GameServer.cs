@@ -54,22 +54,26 @@ public class GameServer : AggregateRoot<GameServerId>
 		return gameServer;
 	}
 
-	public void Use(Server server)
+	public CanFail Use(Server server)
 	{
+		if(Status != GameServerStatus.Offline) return Errors.GameServers.OfflineNeeded;
+		if(!Maintenance) return Errors.GameServers.MaintenanceNeeded;
+
 		HostedOnId = server.Id;
-		Address = server.Address.Host;
+		HostAddressChanged(server.Address);
+		return CanFail.Success();
 	}
 
 	public void HostAddressChanged(Uri newAddress)
 	{
 		Address = newAddress.Host;
+		RaiseDomainEvent(new AddressChangedEvent(Id, Address));
 	}
 
 	public CanFail MarkForStart()
 	{
 		if (HostedOnId is null) return Errors.GameServers.ServerNotHosted;
 
-		if (Maintenance) return Errors.GameServers.NotStartable;
 		if (Status == GameServerStatus.Online) return Errors.GameServers.AlreadyOnline;
 		if (Status == GameServerStatus.Starting) return Errors.GameServers.AlreadyStarting;
 

@@ -16,6 +16,11 @@ public class UserRepository(GamingManagerDomainContext context) : IUserRepositor
 		context.Users.Remove(user);
 	}
 
+	public IAsyncEnumerable<User> GetAllAdmins()
+	{
+		return context.Users.Where(user => user.Role == Role.Admin).AsAsyncEnumerable();
+	}
+
 	public async Task<User?> GetAsync(UserId id)
 	{
 		return await context.Users.FirstOrDefaultAsync(user => user.Id == id);
